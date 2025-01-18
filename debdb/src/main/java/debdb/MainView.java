@@ -20,7 +20,9 @@ import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.contextmenu.MenuItem;
 import com.vaadin.flow.component.contextmenu.SubMenu;
+import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.component.grid.editor.Editor;
 import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.menubar.MenuBar;
@@ -29,6 +31,8 @@ import com.vaadin.flow.component.notification.NotificationVariant;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.data.binder.Binder;
+import com.vaadin.flow.data.binder.ValidationException;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.VaadinSession;
 
@@ -52,8 +56,7 @@ import de.f0rce.ace.enums.AceTheme;
 public class MainView extends VerticalLayout {
 
 	 
-	Integer step = 0;
-	de.f0rce.ace.AceEditor editor = new de.f0rce.ace.AceEditor();
+	
 	 
 
 	public MainView() {
@@ -66,7 +69,7 @@ public class MainView extends VerticalLayout {
 		Image lab = new Image("img/bannerspl.png", "banner");
 		lab.setWidth("100%");
 		lab.setHeight("200px");
-		HorizontalLayout lfile = new HorizontalLayout();
+		 
 	 
 
 		Button run = new Button("Run");
@@ -79,18 +82,19 @@ public class MainView extends VerticalLayout {
 		VerticalLayout edS = new VerticalLayout();
 		VerticalLayout edP = new VerticalLayout();
 
-		editor.setHeight("300px");
-		editor.setWidth("100%");
-		editor.setFontSize(18);
-		editor.setMode(AceMode.sparql);
-		editor.setTheme(AceTheme.eclipse);
-		editor.setUseWorker(true);
-		editor.setReadOnly(false);
-		editor.setShowInvisibles(false);
-		editor.setShowGutter(false);
-		editor.setShowPrintMargin(false);
-		editor.setSofttabs(false);
-
+		AceEditor editorS = new de.f0rce.ace.AceEditor();
+		editorS.setHeight("300px");
+		editorS.setWidth("100%");
+		editorS.setFontSize(18);
+		editorS.setMode(AceMode.sparql);
+		editorS.setTheme(AceTheme.eclipse);
+		editorS.setUseWorker(true);
+		editorS.setReadOnly(false);
+		editorS.setShowInvisibles(false);
+		editorS.setShowGutter(false);
+		editorS.setShowPrintMargin(false);
+		editorS.setSofttabs(false);
+		autocompletion(editorS);
 		 
 		
 		String prefix = "PREFIX dbo:<http://dbpedia.org/ontology/>"
@@ -156,87 +160,104 @@ public class MainView extends VerticalLayout {
 		editorP.setSofttabs(false);
 		
 
-		editor.setValue(exampleA);
+		editorS.setValue(exampleA);
 		
-		Grid<HashMap<String, org.jpl7.Term>> answers = new Grid<HashMap<String, org.jpl7.Term>>();
-		answers.setWidth("100%");
-		answers.setHeight("100%");
-		answers.setVisible(true);
+		Grid<HashMap<String, org.jpl7.Term>> answersP = new Grid<HashMap<String, org.jpl7.Term>>();
+		answersP.setWidth("100%");
+		answersP.setHeight("100%");
+		answersP.setVisible(true);
 		
-		VerticalLayout lanswers = new VerticalLayout();
-		lanswers.setWidth("100%");
-		lanswers.setHeight("200pt");
-		lanswers.setVisible(true);
+		
+		VerticalLayout lanswersP = new VerticalLayout();
+		lanswersP.setWidth("100%");
+		lanswersP.setHeight("200pt");
+		lanswersP.setVisible(true);
 
-		Grid<HashMap<String, String>> answers1 = new Grid<HashMap<String, String>>();
-		answers1.setWidth("100%");
-		answers1.setHeight("100%");
-		answers1.setVisible(true);
+		Grid<HashMap<String, String>> answersS = new Grid<HashMap<String, String>>();
+		answersS.setWidth("100%");
+		answersS.setHeight("100%");
+		answersS.setVisible(true);
+		
+		 
+		 
+		
+		VerticalLayout lanswersS = new VerticalLayout();
+		lanswersS.setWidth("100%");
+		lanswersS.setHeight("200pt");
+		lanswersS.setVisible(true);
+		
+		Grid<HashMap<String, String>> expected = new Grid<HashMap<String, String>>();
+		expected.setWidth("100%");
+		expected.setHeight("100%");
+		expected.setVisible(true);
+		
+
+		
+		VerticalLayout lexpected = new VerticalLayout();
+		lexpected.setWidth("100%");
+		lexpected.setHeight("200pt");
+		lexpected.setVisible(true);
+		
+		Grid<HashMap<String, String>> unexpected = new Grid<HashMap<String, String>>();
+		unexpected.setWidth("100%");
+		unexpected.setHeight("100%");
+		unexpected.setVisible(true);
+		
+		VerticalLayout lunexpected = new VerticalLayout();
+		lunexpected.setWidth("100%");
+		lunexpected.setHeight("200pt");
+		lunexpected.setVisible(true);
+		
+		 
 		
 		
-		
-		
-		VerticalLayout lanswers1 = new VerticalLayout();
-		lanswers1.setWidth("100%");
-		lanswers1.setHeight("200pt");
-		lanswers1.setVisible(true);
-		
-		Grid<HashMap<String, String>> answers2 = new Grid<HashMap<String, String>>();
-		answers2.setWidth("100%");
-		answers2.setHeight("100%");
-		answers2.setVisible(true);
-		
-		VerticalLayout lanswers2 = new VerticalLayout();
-		lanswers2.setWidth("100%");
-		lanswers2.setHeight("200pt");
-		lanswers2.setVisible(true);
-		
-		
-		
-		List<HashMap<String, String>> rows = new ArrayList<>();
+		List<HashMap<String, String>> rowsS = new ArrayList<>();
+		List<HashMap<String, String>> rowsE = new ArrayList<>();
+		List<HashMap<String, String>> rowsU = new ArrayList<>();
+
 
 		MenuBar menuBar = new MenuBar();
 		menuBar.setWidth("100%");
 		ComponentEventListener<ClickEvent<MenuItem>> listener = e -> {
 
-			answers1.removeAllColumns();
+			//answersS.removeAllColumns();
 			editorP.clear();
 
 			if (e.getSource().getText().equals("Example A")) {
 
-				editor.setValue(exampleA);
+				editorS.setValue(exampleA);
 
 			} else if (e.getSource().getText().equals("Example B")) {
 
-				editor.setValue(exampleB);
+				editorS.setValue(exampleB);
 
 			} else if (e.getSource().getText().equals("Example C")) {
 
-				editor.setValue(exampleC);
+				editorS.setValue(exampleC);
 
 			} else if (e.getSource().getText().equals("Example D")) {
 
-				editor.setValue(exampleD);
+				editorS.setValue(exampleD);
 
 			} else if (e.getSource().getText().equals("Example E")) {
 
-				editor.setValue(exampleE);
+				editorS.setValue(exampleE);
 
 			} else if (e.getSource().getText().equals("Example F")) {
 
-				editor.setValue(exampleF);
+				editorS.setValue(exampleF);
 
 			} else if (e.getSource().getText().equals("Example G")) {
 
-				editor.setValue(exampleG);
+				editorS.setValue(exampleG);
 
 			} else if (e.getSource().getText().equals("Example H")) {
 
-				editor.setValue(exampleH);
+				editorS.setValue(exampleH);
 
 			} else if (e.getSource().getText().equals("Example I")) {
 
-				editor.setValue(exampleI);
+				editorS.setValue(exampleI);
 
 			}
 
@@ -260,19 +281,17 @@ public class MainView extends VerticalLayout {
 
 			@Override
 			public void onComponentEvent(ClickEvent<Button> event) {
-				String t = "";
-				ResultSet result;
-				// Define the DBpedia SPARQL endpoint
+				 
 				String service = "http://dbpedia.org/sparql";
 
 				 
-				// Create a query execution object
-				Query query = QueryFactory.create(prefix+editor.getValue());
+				 
+				Query query = QueryFactory.create(prefix+editorS.getValue());
 				
 				
 				pSPARQL ps = new pSPARQL();
 
-				List<List<String>> rules = ps.SPARQLtoProlog(prefix+editor.getValue(), 0);
+				List<List<String>> rules = ps.SPARQLtoProlog(prefix+editorS.getValue(), 0);
 				
 				String pp = "";
 				String prule = "";
@@ -287,16 +306,17 @@ public class MainView extends VerticalLayout {
 				}
 				
 				editorP.setValue(pp);
+				 
 				
 				try (QueryExecution qexec = QueryExecutionFactory.sparqlService(service, query)) {
-					// Execute the query and obtain results
+					 
 					ResultSet results = qexec.execSelect();
 
-					answers1.removeAllColumns();
-					answers2.removeAllColumns();
+					//answersS.removeAllColumns();
+					
 					List<String> variables = results.getResultVars();
 
-					rows.clear();
+					rowsS.clear();
 					while (results.hasNext()) {
 						QuerySolution solution = results.next();
 						LinkedHashMap<String, String> sol = new LinkedHashMap<String, String>();
@@ -307,19 +327,19 @@ public class MainView extends VerticalLayout {
 							} else
 								sol.put(vari, solution.get(vari).toString());
 						}
-						rows.add(sol);
+						rowsS.add(sol);
 					}
-					answers1.setItems(rows);
-					if (rows.size() > 0) {
-						lanswers1.setVisible(true);
-						answers1.setVisible(true);
-
-						editorP.setVisible(true);
-						HashMap<String, String> sr = rows.get(0);
+					answersS.setItems(rowsS);
+					
+					
+					 
+					if (rowsS.size() > 0) {
+						 
+						HashMap<String, String> sr = rowsS.get(0);
 
 						for (Map.Entry<String, String> entry : sr.entrySet()) {
 
-							answers1.addColumn(h -> h.get(entry.getKey())).setHeader(entry.getKey()).setAutoWidth(true)
+							answersS.addColumn(h -> h.get(entry.getKey())).setHeader(entry.getKey()).setAutoWidth(true)
 									.setResizable(true).setSortable(true)
 									.setComparator((x, y) -> isNumeric(x.get(entry.getKey()).toString())
 											& isNumeric(y.get(entry.getKey()).toString())
@@ -328,10 +348,31 @@ public class MainView extends VerticalLayout {
 													: x.get(entry.getKey()).toString()
 															.compareTo(y.get(entry.getKey()).toString()));
 
+						 
+
+							expected.addColumn(h -> h.get(entry.getKey())).setHeader(entry.getKey()).setAutoWidth(true)
+									.setResizable(true).setSortable(true)
+									.setComparator((x, y) -> isNumeric(x.get(entry.getKey()).toString())
+											& isNumeric(y.get(entry.getKey()).toString())
+													? Float.compare(Float.parseFloat(x.get(entry.getKey()).toString()),
+															Float.parseFloat(y.get(entry.getKey()).toString()))
+													: x.get(entry.getKey()).toString()
+															.compareTo(y.get(entry.getKey()).toString()));
+							unexpected.addColumn(h -> h.get(entry.getKey())).setHeader(entry.getKey()).setAutoWidth(true)
+							.setResizable(true).setSortable(true)
+							.setComparator((x, y) -> isNumeric(x.get(entry.getKey()).toString())
+									& isNumeric(y.get(entry.getKey()).toString())
+											? Float.compare(Float.parseFloat(x.get(entry.getKey()).toString()),
+													Float.parseFloat(y.get(entry.getKey()).toString()))
+											: x.get(entry.getKey()).toString()
+													.compareTo(y.get(entry.getKey()).toString()));
+							
+							 
+
 						}
 					} else {
 
-						editorP.setVisible(true);
+						 
 						show_notification("Successful!", "No answer found");
 					}
 
@@ -346,55 +387,12 @@ public class MainView extends VerticalLayout {
 
 			@Override
 			public void onComponentEvent(ClickEvent<Button> event) {
-				// TODO Auto-generated method stub
-				/*
-				step = 0; // step++;
-				pSPARQL ps = new pSPARQL();
-				String s = editor.getValue();
-				List<List<String>> rules = null;
-				rules = ps.SPARQLtoProlog(s, step);
-
-				String pp = "";
-				String prule = "";
-				for (List<String> r : rules) {
-					prule = r.get(0) + ":-";
-					for (int i = 1; i < r.size(); i++) {
-						prule = prule + "\n       " + r.get(i) + ",";
-					}
-					prule = prule.substring(0, prule.length() - 1) + ".";
-					pp = pp + "\n" + prule;
-
-				}*/
-				answers2.setItems(rows);
-				lanswers2.setVisible(true);
-				answers2.setVisible(true);
-				List<HashMap<String, String>> rows2 = new ArrayList<>();
-				answers1.addItemClickListener(event2->{Notification.show(event2.getItem().toString()); rows2.add(event2.getItem());answers2.setItems(rows);});
+				 
+				//expected.removeAllColumns();
+				//unexpected.removeAllColumns();
+			    
 				
-				/*if (rows2.size() > 0) {
-					lanswers2.setVisible(true);
-					answers2.setVisible(true);
-
-					editorP.setVisible(true);
-					HashMap<String, String> sr = rows2.get(0);
-
-					for (Map.Entry<String, String> entry : sr.entrySet()) {
-
-						answers2.addColumn(h -> h.get(entry.getKey())).setHeader(entry.getKey()).setAutoWidth(true)
-								.setResizable(true).setSortable(true)
-								.setComparator((x, y) -> isNumeric(x.get(entry.getKey()).toString())
-										& isNumeric(y.get(entry.getKey()).toString())
-												? Float.compare(Float.parseFloat(x.get(entry.getKey()).toString()),
-														Float.parseFloat(y.get(entry.getKey()).toString()))
-												: x.get(entry.getKey()).toString()
-														.compareTo(y.get(entry.getKey()).toString()));
-
-					}
-				} else {
-
-					editorP.setVisible(true);
-					show_notification("Error","Please select at least one answer");
-				}*/
+				
 
 				/*
 				String t1 = "use_module(library(semweb/rdf11))";
@@ -520,30 +518,36 @@ public class MainView extends VerticalLayout {
 
 		});
 
-		edS.add(editor);
-		edP.add(editorP);
-		layout.add(lab);
-		layout.add(new Label("Please select an example"));
-		layout.add(menuBar);
-
-		layout.add(lfile);
+		
 
 		 
 
+	        
+	        
+	        
+		layout.add(lab);
+		layout.add(new Label("Please select an example"));
+		layout.add(menuBar);
+		edS.add(editorS);	
 		layout.add(edS);
 		layout.add(run);
 		layout.add(debug);
-		lanswers1.add(answers1);
-		layout.add(lanswers1);
-		lanswers2.add(answers2);
-		layout.add(lanswers2);
-
+		lanswersS.add(answersS);
+		layout.add(lanswersS);
+		lexpected.add(expected);
+		layout.add(lexpected);
+		lexpected.add(unexpected);
+		layout.add(lunexpected);
+		edP.add(editorP);
 		layout.add(edP);
-
-		editor.setLiveAutocompletion(true);
+		editorS.setLiveAutocompletion(true);
 		editorP.setVisible(true);
 		add(layout);
 		this.setSizeFull();
+		
+		
+		
+		
 
 	}
 
@@ -553,7 +557,7 @@ public class MainView extends VerticalLayout {
 		notification.setPosition(Notification.Position.MIDDLE);
 	}
 
-	public void autocompletion() {
+	public void autocompletion(AceEditor editor) {
 
 		List<String> l = new ArrayList<String>();
 		l.add("SELECT");
@@ -578,4 +582,9 @@ public class MainView extends VerticalLayout {
 		}
 		return true;
 	}
+	
+	 
+       
+     
+ 
 }
