@@ -214,7 +214,8 @@ public class MainView extends VerticalLayout {
 		List<HashMap<String, String>> rowsS = new ArrayList<>();
 		List<HashMap<String, String>> rowsE = new ArrayList<>();
 		List<HashMap<String, String>> rowsU = new ArrayList<>();
-
+		HashMap<String, TextField> textfields = new HashMap<>();
+		 
 
 		MenuBar menuBar = new MenuBar();
 		menuBar.setWidth("100%");
@@ -312,7 +313,9 @@ public class MainView extends VerticalLayout {
 					 
 					ResultSet results = qexec.execSelect();
 
-					//answersS.removeAllColumns();
+					answersS.removeAllColumns();
+					expected.removeAllColumns();
+					unexpected.removeAllColumns();
 					
 					List<String> variables = results.getResultVars();
 
@@ -367,7 +370,10 @@ public class MainView extends VerticalLayout {
 											: x.get(entry.getKey()).toString()
 													.compareTo(y.get(entry.getKey()).toString()));
 							
-							 
+							TextField tf = new TextField();
+							tf.setWidth("100%");
+							tf.setValue(entry.getValue());
+							textfields.put(entry.getKey(), tf);
 
 						}
 					} else {
@@ -387,6 +393,26 @@ public class MainView extends VerticalLayout {
 
 			@Override
 			public void onComponentEvent(ClickEvent<Button> event) {
+				
+				Dialog d = new Dialog();
+				d.setWidth("100%");
+				 
+				VerticalLayout  vl = new VerticalLayout();
+				vl.setWidth("100%");
+				vl.setHeight("100%");
+				for (String tf:textfields.keySet()) {
+					HorizontalLayout hl = new HorizontalLayout();
+					hl.setWidth("100%");
+					hl.setHeight("100%");
+					hl.add(new Label(tf));
+					hl.add(textfields.get(tf));
+					vl.add(hl);
+				}
+				Button add = new Button("Add");
+				vl.add(add);
+				d.add(vl);		
+				add.addClickListener(event2->d.close());		
+				d.open();
 				 
 				//expected.removeAllColumns();
 				//unexpected.removeAllColumns();
