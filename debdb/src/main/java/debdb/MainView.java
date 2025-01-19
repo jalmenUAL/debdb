@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import org.apache.jena.query.Query;
@@ -22,6 +23,7 @@ import com.vaadin.flow.component.contextmenu.MenuItem;
 import com.vaadin.flow.component.contextmenu.SubMenu;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.component.grid.Grid.SelectionMode;
 import com.vaadin.flow.component.grid.editor.Editor;
 import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.html.Label;
@@ -77,13 +79,35 @@ public class MainView extends VerticalLayout {
 		run.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
 		Button debug = new Button("Debug");
 		debug.setWidth("100%");
-		debug.addThemeVariants(ButtonVariant.LUMO_ERROR);
+		debug.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
+		debug.setVisible(false);
+		Button addexpected = new Button("Add Expected Answer");
+		addexpected.setWidth("100%");
+		addexpected.addThemeVariants(ButtonVariant.LUMO_ERROR);
+		addexpected.setVisible(false);
+		Button addunexpected = new Button("Add Unexpected Answer");
+		addunexpected.setWidth("100%");
+		addunexpected.addThemeVariants(ButtonVariant.LUMO_ERROR);
+		addunexpected.setVisible(false);
+		Button find = new Button("Find Query");
+		find.setWidth("100%");
+		find.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
+		find.setVisible(false);
+		Button removeexpected = new Button("Remove Expected");
+		removeexpected.setWidth("100%");
+		removeexpected.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
+		removeexpected.setVisible(false);
+		Button removeunexpected = new Button("Remove Unexpected");
+		removeunexpected.setWidth("100%");
+		removeunexpected.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
+		removeunexpected.setVisible(false);
 
 		VerticalLayout edS = new VerticalLayout();
 		VerticalLayout edP = new VerticalLayout();
+		edP.setVisible(false);
 
 		AceEditor editorS = new de.f0rce.ace.AceEditor();
-		editorS.setHeight("300px");
+		editorS.setHeight("400px");
 		editorS.setWidth("100%");
 		editorS.setFontSize(18);
 		editorS.setMode(AceMode.sparql);
@@ -147,7 +171,7 @@ public class MainView extends VerticalLayout {
 				+ "  }";
 
 		AceEditor editorP = new AceEditor();
-		editorP.setHeight("300px");
+		editorP.setHeight("400px");
 		editorP.setWidth("100%");
 		editorP.setFontSize(18);
 		editorP.setMode(AceMode.prolog);
@@ -165,48 +189,49 @@ public class MainView extends VerticalLayout {
 		Grid<HashMap<String, org.jpl7.Term>> answersP = new Grid<HashMap<String, org.jpl7.Term>>();
 		answersP.setWidth("100%");
 		answersP.setHeight("100%");
-		answersP.setVisible(true);
+		 
 		
 		
 		VerticalLayout lanswersP = new VerticalLayout();
 		lanswersP.setWidth("100%");
-		lanswersP.setHeight("200pt");
-		lanswersP.setVisible(true);
+		lanswersP.setHeight("100%");
+		lanswersP.setVisible(false);
+		
 
 		Grid<HashMap<String, String>> answersS = new Grid<HashMap<String, String>>();
 		answersS.setWidth("100%");
 		answersS.setHeight("100%");
-		answersS.setVisible(true);
+		 
 		
 		 
 		 
 		
 		VerticalLayout lanswersS = new VerticalLayout();
 		lanswersS.setWidth("100%");
-		lanswersS.setHeight("200pt");
-		lanswersS.setVisible(true);
+		lanswersS.setHeight("400pt");
+		lanswersS.setVisible(false);
 		
 		Grid<HashMap<String, String>> expected = new Grid<HashMap<String, String>>();
 		expected.setWidth("100%");
 		expected.setHeight("100%");
-		expected.setVisible(true);
+		 
 		
 
 		
 		VerticalLayout lexpected = new VerticalLayout();
 		lexpected.setWidth("100%");
-		lexpected.setHeight("200pt");
-		lexpected.setVisible(true);
+		lexpected.setHeight("400pt");
+		lexpected.setVisible(false);
 		
 		Grid<HashMap<String, String>> unexpected = new Grid<HashMap<String, String>>();
 		unexpected.setWidth("100%");
 		unexpected.setHeight("100%");
-		unexpected.setVisible(true);
+		 
 		
 		VerticalLayout lunexpected = new VerticalLayout();
 		lunexpected.setWidth("100%");
-		lunexpected.setHeight("200pt");
-		lunexpected.setVisible(true);
+		lunexpected.setHeight("400pt");
+		lunexpected.setVisible(false);
 		
 		 
 		
@@ -215,7 +240,10 @@ public class MainView extends VerticalLayout {
 		List<HashMap<String, String>> rowsE = new ArrayList<>();
 		List<HashMap<String, String>> rowsU = new ArrayList<>();
 		HashMap<String, TextField> textfields = new HashMap<>();
-		 
+		
+		answersS.setSelectionMode(SelectionMode.MULTI);
+		expected.setSelectionMode(SelectionMode.MULTI);
+		unexpected.setSelectionMode(SelectionMode.MULTI);
 
 		MenuBar menuBar = new MenuBar();
 		menuBar.setWidth("100%");
@@ -285,7 +313,10 @@ public class MainView extends VerticalLayout {
 				 
 				String service = "http://dbpedia.org/sparql";
 
-				 
+				debug.setVisible(true);
+				addexpected.setVisible(false);
+				addunexpected.setVisible(false);
+				find.setVisible(false);
 				 
 				Query query = QueryFactory.create(prefix+editorS.getValue());
 				
@@ -337,6 +368,8 @@ public class MainView extends VerticalLayout {
 					
 					 
 					if (rowsS.size() > 0) {
+						
+						lanswersS.setVisible(true);
 						 
 						HashMap<String, String> sr = rowsS.get(0);
 
@@ -386,36 +419,115 @@ public class MainView extends VerticalLayout {
 			}
 
 		});
+		
+		
+		addunexpected.addClickListener(event->{
+			
+			if (answersS.getSelectedItems().size()==0) {Notification.show("Please select at least one element");}
+			else {
+				
+			rowsU.addAll(answersS.getSelectedItems());
+			unexpected.setItems(rowsU);	
+				
+			}
+			
+		});
+		removeexpected.addClickListener(event->{
+			
+			if (expected.getSelectedItems().size()==0) {Notification.show("Please select at least one element");}
+			else {
+				
+			rowsE.removeAll(expected.getSelectedItems());
+			expected.setItems(rowsE);	
+				
+			}
+			
+		});
+
+		removeunexpected.addClickListener(event->{
+			
+			if (unexpected.getSelectedItems().size()==0) {Notification.show("Please select at least one element");}
+			else {
+				
+			rowsU.removeAll(unexpected.getSelectedItems());
+			unexpected.setItems(rowsU);	
+				
+			}
+			
+		});
+		
+addunexpected.addClickListener(event->{
+	
+	if (answersS.getSelectedItems().size()==0) {Notification.show("Please select at least one element");}
+	else {
+		
+	rowsU.addAll(answersS.getSelectedItems());
+	unexpected.setItems(rowsU);	
+		
+	}
+	
+});
 
 		
+		addexpected.addClickListener(event->{
+			
+			Dialog d = new Dialog();
+			d.setWidth("100%");
+			
+			VerticalLayout  vl = new VerticalLayout();
+			vl.setWidth("100%");
+			vl.setHeight("100%");
+			for (String tf:textfields.keySet()) {
+				HorizontalLayout hl = new HorizontalLayout();
+				hl.setWidth("100%");
+				hl.setHeight("100%");
+				hl.add(new Label(tf));
+				hl.add(textfields.get(tf));
+				vl.add(hl);
+			}
+			
+			Button add = new Button("Add");
+			vl.add(add);
+			d.add(vl);	
+			
+			
+			
+			
+			add.addClickListener(
+					event2-> {
+						HashMap<String, String> ex = new HashMap<String, String>();
+						
+						for (Entry<String, TextField> tf: textfields.entrySet()) {
+							ex.put(tf.getKey(), tf.getValue().getValue());
+							rowsE.add(ex);
+						}
+						expected.setItems(rowsE);
+						d.close();
+						}
+					);		
+			
+			d.open();
+			
+		});
+		
+		find.addClickListener(event->{
+			
+			
+		});
 
 		debug.addClickListener(new ComponentEventListener<ClickEvent<Button>>() {
 
 			@Override
 			public void onComponentEvent(ClickEvent<Button> event) {
 				
-				Dialog d = new Dialog();
-				d.setWidth("100%");
 				 
-				VerticalLayout  vl = new VerticalLayout();
-				vl.setWidth("100%");
-				vl.setHeight("100%");
-				for (String tf:textfields.keySet()) {
-					HorizontalLayout hl = new HorizontalLayout();
-					hl.setWidth("100%");
-					hl.setHeight("100%");
-					hl.add(new Label(tf));
-					hl.add(textfields.get(tf));
-					vl.add(hl);
-				}
-				Button add = new Button("Add");
-				vl.add(add);
-				d.add(vl);		
-				add.addClickListener(event2->d.close());		
-				d.open();
-				 
-				//expected.removeAllColumns();
-				//unexpected.removeAllColumns();
+				
+				debug.setVisible(false);
+				addexpected.setVisible(true);
+				addunexpected.setVisible(true);
+				lexpected.setVisible(true);
+				lunexpected.setVisible(true);
+				find.setVisible(true);
 			    
 				
 				
@@ -558,18 +670,22 @@ public class MainView extends VerticalLayout {
 		layout.add(edS);
 		layout.add(run);
 		layout.add(debug);
+		layout.add(addexpected);
+		layout.add(addunexpected);
+		layout.add(find);
 		lanswersS.add(answersS);
 		layout.add(lanswersS);
 		lexpected.add(expected);
 		layout.add(lexpected);
-		lexpected.add(unexpected);
+		lunexpected.add(unexpected);
 		layout.add(lunexpected);
 		edP.add(editorP);
 		layout.add(edP);
 		editorS.setLiveAutocompletion(true);
 		editorP.setVisible(true);
 		add(layout);
-		this.setSizeFull();
+		this.setHeight("100%");
+		this.setWidth("100%");
 		
 		
 		
