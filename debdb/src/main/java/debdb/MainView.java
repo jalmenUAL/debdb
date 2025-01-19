@@ -6,6 +6,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import org.apache.jena.query.Query;
 import org.apache.jena.query.QueryExecution;
@@ -13,6 +14,7 @@ import org.apache.jena.query.QueryExecutionFactory;
 import org.apache.jena.query.QueryFactory;
 import org.apache.jena.query.QuerySolution;
 import org.apache.jena.query.ResultSet;
+import org.jpl7.Term;
 
 import com.vaadin.flow.component.ClickEvent;
 import com.vaadin.flow.component.ComponentEventListener;
@@ -41,6 +43,8 @@ import de.f0rce.ace.enums.AceTheme;
 
 @Route
 public class MainView extends VerticalLayout {
+	
+	List<List<String>> rules;
 
 	public MainView() {
 
@@ -147,7 +151,7 @@ public class MainView extends VerticalLayout {
 
 		VerticalLayout lanswersP = new VerticalLayout();
 		lanswersP.setWidth("100%");
-		lanswersP.setHeight("100%");
+		lanswersP.setHeight("400pt");
 		lanswersP.setVisible(false);
 
 		Grid<HashMap<String, String>> answersS = new Grid<HashMap<String, String>>();
@@ -180,6 +184,8 @@ public class MainView extends VerticalLayout {
 		List<HashMap<String, String>> rowsS = new ArrayList<>();
 		List<HashMap<String, String>> rowsE = new ArrayList<>();
 		List<HashMap<String, String>> rowsU = new ArrayList<>();
+		
+		List<HashMap<String, org.jpl7.Term>> rowsP = new ArrayList<>();
 		HashMap<String, TextField> textfields = new HashMap<>();
 
 		answersS.setSelectionMode(SelectionMode.MULTI);
@@ -267,7 +273,7 @@ public class MainView extends VerticalLayout {
 
 				pSPARQL ps = new pSPARQL();
 
-				List<List<String>> rules = ps.SPARQLtoProlog(prefix + editorS.getValue(), 0);
+				rules = ps.SPARQLtoProlog(prefix + editorS.getValue(), 0);
 
 				String pp = "";
 				String prule = "";
@@ -434,6 +440,61 @@ public class MainView extends VerticalLayout {
 		});
 
 		find.addClickListener(event -> {
+			
+			lanswersP.setVisible(true);
+			
+			String t1 = "use_module(library(semweb/rdf11))";
+			org.jpl7.Query q1 = new org.jpl7.Query(t1);
+			System.out.print((q1.hasSolution() ? "" : ""));
+			q1.close();
+
+			
+			 
+			 
+			  
+			  
+			String prule = "";
+			for (List<String> r : rules) {
+				prule = r.get(0) + ":-";
+				for (int i = 1; i < r.size(); i++) {
+					prule = prule + r.get(i) + ',';
+				}
+				prule = prule.substring(0, prule.length() - 1);
+				String aprule = "asserta((" + prule + "))";
+				org.jpl7.Query q = new org.jpl7.Query(aprule);
+				System.out.println((q.hasSolution() ? aprule : ""));
+				q.close();
+
+			}
+			
+			
+			 
+			   
+			  
+			org.jpl7.Query q2 = new org.jpl7.Query("X=0.");
+			Map<String, org.jpl7.Term>[] sols = q2.allSolutions();
+			q2.close();
+			  
+			for (Map<String, org.jpl7.Term> solution : sols) {
+				 
+				for ( String a : solution.keySet()) {
+					HashMap<String, org.jpl7.Term> el = new HashMap<String, org.jpl7.Term>();
+					el.put(a, solution.get(a));
+					rowsP.add(el);
+				}	
+			answersP.setItems(rowsP);			 
+			}
+		
+			  for (List<String> r : rules) {
+			  
+			  String dr = r.get(0); org.jpl7.Query drq = new org.jpl7.Query("retractall(" +
+			  dr + ")"); System.out.println((drq.hasSolution() ? drq : "")); drq.close();
+			  
+			  }
+			  
+			   
+			 
+
 
 		});
 
@@ -451,97 +512,7 @@ public class MainView extends VerticalLayout {
 				removeexpected.setVisible(true);
 				removeunexpected.setVisible(true);
 
-				/*
-				 * String t1 = "use_module(library(semweb/rdf11))"; org.jpl7.Query q1 = new
-				 * org.jpl7.Query(t1); System.out.print((q1.hasSolution() ? "" : ""));
-				 * q1.close();
-				 * 
-				 * String t11 = "use_module(library(semweb/rdf_http_plugin))"; org.jpl7.Query
-				 * q11 = new org.jpl7.Query(t11); System.out.print((q11.hasSolution() ? "" :
-				 * "")); q11.close();
-				 * 
-				 * String t12 = "use_module(library(lists))"; org.jpl7.Query q12 = new
-				 * org.jpl7.Query(t12); System.out.print((q12.hasSolution() ? "" : ""));
-				 * q12.close();
-				 * 
-				 * String t21b = "rdf_reset_db"; org.jpl7.Query q21b = new org.jpl7.Query(t21b);
-				 * System.out.print((q21b.hasSolution() ? "" : "")); q21b.close();
-				 * 
-				 * String t21bb = "rdf_reset_db"; org.jpl7.Query q21bb = new
-				 * org.jpl7.Query(t21bb); System.out.print((q21bb.hasSolution() ? "" : ""));
-				 * q21bb.close();
-				 * 
-				 * String t21c = " working_directory(_,\"C:/\")"; org.jpl7.Query q21c = new
-				 * org.jpl7.Query(t21c); System.out.print((q21c.hasSolution() ? "" : ""));
-				 * q21c.close();
-				 * 
-				 * String t2 = "rdf_load('" + "C:/tmp-sparql/model.rdf" + "')"; org.jpl7.Query
-				 * q2 = new org.jpl7.Query(t2); System.out.print((q2.hasSolution() ? "" : ""));
-				 * q2.close();
-				 * 
-				 * editorP.setValue(pp);
-				 * 
-				 * String prule2 = ""; System.out.println("Number of rules: " + rules.size());
-				 * for (List<String> r : rules) {
-				 * 
-				 * prule2 = r.get(0) + ":-"; for (int i = 1; i < r.size(); i++) { prule2 =
-				 * prule2 + r.get(i) + ','; } prule2 = prule2.substring(0, prule2.length() - 1);
-				 * String aprule = "asserta((" + prule2 + "))"; org.jpl7.Query q3 = new
-				 * org.jpl7.Query(aprule); System.out.println((q3.hasSolution() ? aprule : ""));
-				 * q3.close();
-				 * 
-				 * }
-				 * 
-				 * String[] ops = {
-				 * "'http://www.w3.org/2001/XMLSchema#decimal'(X^^TX,Y^^'http://www.w3.org/2001/XMLSchema#decimal'):-!, Y=X "
-				 * ,
-				 * "'http://jena.apache.org/ARQ/function#sqrt'(X^^TX,Y^^TX):-!, Y is sqrt(X) ",
-				 * "if(X,Y,Z,T):-!,((X=1^^_)->T=Y;T=Z)",
-				 * "call_function(X,Y,F,T):-!, X=..[_,TX,TYPE],Y=..[_,TY|_],NE=..[F,TX,TY],TAUX is NE,T=..['^^',TAUX,'http://www.w3.org/2001/XMLSchema#decimal']"
-				 * };
-				 * 
-				 * for (int i = 0; i < ops.length; i++) { String aprule = "asserta((" + ops[i] +
-				 * "))"; org.jpl7.Query q3 = new org.jpl7.Query(aprule);
-				 * System.out.println((q3.hasSolution() ? aprule : "")); q3.close(); }
-				 * 
-				 * List<HashMap<String, org.jpl7.Term>> rows = new ArrayList<>();
-				 * 
-				 * answers1.removeAllColumns();
-				 * 
-				 * org.jpl7.Atom t = new org.jpl7.Atom("Null"); org.jpl7.Query q3 = new
-				 * org.jpl7.Query(rules.get(0).get(0)); Map<String, org.jpl7.Term>[] sols =
-				 * q3.allSolutions(); q3.close();
-				 * 
-				 * for (Map<String, org.jpl7.Term> solution : sols) { Set<String> sol =
-				 * solution.keySet(); for (String var : sol) { if
-				 * (solution.get(var).isCompound()) { solution.put(var,
-				 * solution.get(var).arg(1)); } if (solution.get(var).isVariable()) {
-				 * solution.put(var, t); } } }
-				 * 
-				 * for (Map<String, org.jpl7.Term> solution : sols) { rows.add((HashMap<String,
-				 * org.jpl7.Term>) solution);
-				 * 
-				 * } System.out.println("Yes: answers " + sols.length);
-				 * 
-				 * answers.setItems(rows);
-				 * 
-				 * if (rows.size() > 0) { HashMap<String, org.jpl7.Term> sr = rows.get(0);
-				 * 
-				 * for (Map.Entry<String, org.jpl7.Term> entry : sr.entrySet()) {
-				 * answers1.addColumn(h -> h.get(entry.getKey())).setHeader(entry.getKey()); } }
-				 * 
-				 * for (List<String> r : rules) {
-				 * 
-				 * String dr = r.get(0); org.jpl7.Query drq = new org.jpl7.Query("retractall(" +
-				 * dr + ")"); System.out.println((drq.hasSolution() ? drq : "")); drq.close();
-				 * 
-				 * }
-				 * 
-				 * for (int i = 0; i < ops.length; i++) { String aprule = "retract((" + ops[i] +
-				 * "))"; org.jpl7.Query q4 = new org.jpl7.Query(aprule);
-				 * System.out.println((q4.hasSolution() ? aprule : "")); q4.close(); }
-				 */
-
+				
 			}
 
 		});
@@ -558,6 +529,8 @@ public class MainView extends VerticalLayout {
 		layout.add(find);
 		lanswersS.add(answersS);
 		layout.add(lanswersS);
+		lanswersP.add(answersP);
+		layout.add(lanswersP);
 		lexpected.add(new Span("List of Expected Answers"));
 		lexpected.add(expected);
 		layout.add(lexpected);
