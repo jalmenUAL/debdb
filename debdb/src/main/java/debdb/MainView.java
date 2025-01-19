@@ -40,10 +40,9 @@ import de.f0rce.ace.AceEditor;
 import de.f0rce.ace.enums.AceMode;
 import de.f0rce.ace.enums.AceTheme;
 
-
 @Route
 public class MainView extends VerticalLayout {
-	
+
 	List<List<String>> rules;
 
 	public MainView() {
@@ -184,7 +183,7 @@ public class MainView extends VerticalLayout {
 		List<HashMap<String, String>> rowsS = new ArrayList<>();
 		List<HashMap<String, String>> rowsE = new ArrayList<>();
 		List<HashMap<String, String>> rowsU = new ArrayList<>();
-		
+
 		List<HashMap<String, org.jpl7.Term>> rowsP = new ArrayList<>();
 		HashMap<String, TextField> textfields = new HashMap<>();
 
@@ -440,20 +439,25 @@ public class MainView extends VerticalLayout {
 		});
 
 		find.addClickListener(event -> {
-			
-			lanswersP.setVisible(true);
-			
-			String t1 = "use_module(library(semweb/rdf11))";
-			org.jpl7.Query q1 = new org.jpl7.Query(t1);
-			System.out.print((q1.hasSolution() ? "" : ""));
-			q1.close();
 
+			lanswersP.setVisible(true);
+
+			/*String t = "use_module(library(semweb/rdf11))";
+			org.jpl7.Query q = new org.jpl7.Query(t);
+			System.out.println((q.hasSolution() ? "RDF loaded" : ""));
+			q.close();*/
 			
-			 
-			 
-			  
-			  
-			String prule = "";
+			String tfd = "use_module(library(clpfd))";
+			org.jpl7.Query qfd = new org.jpl7.Query(tfd);
+			System.out.println((qfd.hasSolution() ? "CLPFD loaded" : ""));
+			qfd.close();
+			
+			String tr = "use_module(library(clpr))";
+			org.jpl7.Query qr = new org.jpl7.Query(tr);
+			System.out.println((qr.hasSolution() ? "CLPR loaded" : ""));
+			qr.close();
+
+			/*String prule = "";
 			for (List<String> r : rules) {
 				prule = r.get(0) + ":-";
 				for (int i = 1; i < r.size(); i++) {
@@ -461,40 +465,55 @@ public class MainView extends VerticalLayout {
 				}
 				prule = prule.substring(0, prule.length() - 1);
 				String aprule = "asserta((" + prule + "))";
-				org.jpl7.Query q = new org.jpl7.Query(aprule);
-				System.out.println((q.hasSolution() ? aprule : ""));
-				q.close();
+				org.jpl7.Query q2 = new org.jpl7.Query(aprule);
+				System.out.println((q2.hasSolution() ? aprule : ""));
+				q2.close();
 
-			}
+			}*/
+
+			org.jpl7.Query q3 = new org.jpl7.Query("{ X + Y + Z =:= 20, X >= 0, Y >= 0, Z >= 0, X =:= 2*Y }, dump([X, Y, Z], [x, y, z], DumpedConstraints),with_output_to(atom(Output),"
+					+ "write(DumpedConstraints))");
+			System.out.println((q3.hasSolution() ? "Goal success" : ""));
+			Map<String, org.jpl7.Term>[] sols = q3.allSolutions();
+			
+			q3.close();
 			
 			
-			 
-			   
-			  
-			org.jpl7.Query q2 = new org.jpl7.Query("X=0.");
-			Map<String, org.jpl7.Term>[] sols = q2.allSolutions();
-			q2.close();
-			  
+
 			for (Map<String, org.jpl7.Term> solution : sols) {
-				 
-				for ( String a : solution.keySet()) {
+
+				for (String a : solution.keySet()) {
 					HashMap<String, org.jpl7.Term> el = new HashMap<String, org.jpl7.Term>();
 					el.put(a, solution.get(a));
+					 
 					rowsP.add(el);
-				}	
-			answersP.setItems(rowsP);			 
-			}
-		
-			  for (List<String> r : rules) {
-			  
-			  String dr = r.get(0); org.jpl7.Query drq = new org.jpl7.Query("retractall(" +
-			  dr + ")"); System.out.println((drq.hasSolution() ? drq : "")); drq.close();
-			  
-			  }
-			  
-			   
-			 
+				}
+				
+				HashMap<String, Term> sr = rowsP.get(0);
 
+				for (Map.Entry<String, Term> entry : sr.entrySet()) {
+				
+				answersP.addColumn(h -> h.get(entry.getKey())).setHeader(entry.getKey()).setAutoWidth(true)
+				.setResizable(true).setSortable(true)
+				.setComparator((x, y) -> isNumeric(x.get(entry.getKey()).toString())
+						& isNumeric(y.get(entry.getKey()).toString())
+								? Float.compare(Float.parseFloat(x.get(entry.getKey()).toString()),
+										Float.parseFloat(y.get(entry.getKey()).toString()))
+								: x.get(entry.getKey()).toString()
+										.compareTo(y.get(entry.getKey()).toString()));
+				}
+				answersP.setItems(rowsP);
+			}
+
+			/*for (List<String> r : rules) {
+
+				String dr = r.get(0);
+				String rule2 = "retractall(" + dr + ")";
+				org.jpl7.Query q4 = new org.jpl7.Query(rule2);
+				System.out.println((q4.hasSolution() ? rule2 : ""));
+				q4.close();
+
+			}*/
 
 		});
 
@@ -512,7 +531,6 @@ public class MainView extends VerticalLayout {
 				removeexpected.setVisible(true);
 				removeunexpected.setVisible(true);
 
-				
 			}
 
 		});
@@ -536,7 +554,7 @@ public class MainView extends VerticalLayout {
 		layout.add(lexpected);
 		layout.add(removeexpected);
 		lunexpected.add(new Span("List of Unexpected Answers"));
-		lunexpected.add(unexpected);		
+		lunexpected.add(unexpected);
 		layout.add(lunexpected);
 		layout.add(removeunexpected);
 		edP.add(editorP);
