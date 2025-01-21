@@ -1778,6 +1778,17 @@ public class pSPARQL {
 	};
 
 	public static void main(String[] args) {
+		
+		String dbp = "PREFIX dbo:<http://dbpedia.org/ontology/>" + "PREFIX dbr:<http://dbpedia.org/resource/>"
+				+ "PREFIX dbp:<http://dbpedia.org/property/>" + "PREFIX foaf:<http://xmlns.com/foaf/0.1/>"
+				+ "PREFIX yago:<http://dbpedia.org/class/yago/>"
+				+ "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>"
+				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>"
+				+ "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>"
+				+ "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>"
+				+ "SELECT ?Country WHERE { " + " ?Country rdf:type yago:WikicatCountriesInEurope ."
+				+ " ?Country dbo:currency dbr:Euro ." + " ?Country dbo:officialLanguage dbr:Italian_language ."
+				+ " ?Country dbo:populationTotal ?Population ." + " FILTER(?Population>=100000) " + " }";
 
 		String prog1 = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>"
 				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>" 
@@ -2205,10 +2216,11 @@ public class pSPARQL {
 		 
 		pSPARQL ps = new pSPARQL();
 
-		List<List<String>> rules = ps.SPARQLtoProlog(db9, 0);
+		List<List<String>> rules = ps.SPARQLtoProlog(dbp, 0);
+		
 		
 		if (!rules.isEmpty()) {
-		System.out.println(rules);
+		//System.out.println(rules);
 
 		String pp = "";
 		String prule = "";
@@ -2223,6 +2235,10 @@ public class pSPARQL {
 		}
 		
 		
+		System.out.println(pp);
+		}
+		
+		/* COMENTADO PARA PROBAR LA TRADUCCIÓN
 		
 		String t1 = "use_module(library(semweb/rdf11))";
 		org.jpl7.Query q1 = new org.jpl7.Query(t1);
@@ -2312,9 +2328,11 @@ public class pSPARQL {
 			System.out.println(solution);
 		}
 		
-         
+              
 		 
-	};
+	}; */
+		
+		
 	}
 
 };

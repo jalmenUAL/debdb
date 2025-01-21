@@ -287,6 +287,7 @@ public class MainView extends VerticalLayout {
 				}
 
 				editorP.setValue(pp);
+				System.out.println(pp);
 
 				try (QueryExecution qexec = QueryExecutionFactory.sparqlService(service, query)) {
 
