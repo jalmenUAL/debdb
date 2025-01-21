@@ -46,7 +46,6 @@ public class MainView extends VerticalLayout {
 
 	public MainView() {
 
-		 
 		VaadinSession.getCurrent().setErrorHandler(new CustomErrorHandler());
 		final VerticalLayout layout = new VerticalLayout();
 		layout.getStyle().set("width", "100%");
@@ -82,7 +81,6 @@ public class MainView extends VerticalLayout {
 		removeunexpected.setWidth("100%");
 		removeunexpected.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
 		removeunexpected.setVisible(false);
-		
 
 		VerticalLayout edS = new VerticalLayout();
 		VerticalLayout edP = new VerticalLayout();
@@ -368,7 +366,7 @@ public class MainView extends VerticalLayout {
 		removeexpected.addClickListener(event -> {
 
 			if (expected.getSelectedItems().size() == 0) {
-				show_notification("Warning","Please select at least one element");
+				show_notification("Warning:", "Please select at least one element");
 			} else {
 
 				rowsE.removeAll(expected.getSelectedItems());
@@ -381,7 +379,7 @@ public class MainView extends VerticalLayout {
 		removeunexpected.addClickListener(event -> {
 
 			if (unexpected.getSelectedItems().size() == 0) {
-				show_notification("Warning","Please select at least one element");
+				show_notification("Warning:", "Please select at least one element");
 			} else {
 
 				rowsU.removeAll(unexpected.getSelectedItems());
@@ -394,7 +392,7 @@ public class MainView extends VerticalLayout {
 		addunexpected.addClickListener(event -> {
 
 			if (answersS.getSelectedItems().size() == 0) {
-				show_notification("Warning","Please select at least one element");
+				show_notification("Warning:", "Please select at least one element");
 			} else {
 
 				rowsU.addAll(answersS.getSelectedItems());
@@ -444,88 +442,120 @@ public class MainView extends VerticalLayout {
 
 			lanswersP.setVisible(true);
 
-			/*String t = "use_module(library(semweb/rdf11))";
-			org.jpl7.Query q = new org.jpl7.Query(t);
-			System.out.println((q.hasSolution() ? "RDF loaded" : ""));
-			q.close();*/
-			
+			/*
+			 * String t = "use_module(library(semweb/rdf11))"; org.jpl7.Query q = new
+			 * org.jpl7.Query(t); System.out.println((q.hasSolution() ? "RDF loaded" : ""));
+			 * q.close();
+			 */
+
 			String tfd = "use_module(library(clpfd))";
 			org.jpl7.Query qfd = new org.jpl7.Query(tfd);
 			System.out.println((qfd.hasSolution() ? "CLPFD loaded" : ""));
 			qfd.close();
-			
+
 			String tr = "use_module(library(clpr))";
 			org.jpl7.Query qr = new org.jpl7.Query(tr);
 			System.out.println((qr.hasSolution() ? "CLPR loaded" : ""));
 			qr.close();
 
-			/*String prule = "";
-			for (List<String> r : rules) {
-				prule = r.get(0) + ":-";
-				for (int i = 1; i < r.size(); i++) {
-					prule = prule + r.get(i) + ',';
-				}
-				prule = prule.substring(0, prule.length() - 1);
-				String aprule = "asserta((" + prule + "))";
-				org.jpl7.Query q2 = new org.jpl7.Query(aprule);
-				System.out.println((q2.hasSolution() ? aprule : ""));
-				q2.close();
+			/*
+			 * String prule = ""; for (List<String> r : rules) { prule = r.get(0) + ":-";
+			 * for (int i = 1; i < r.size(); i++) { prule = prule + r.get(i) + ','; } prule
+			 * = prule.substring(0, prule.length() - 1); String aprule = "asserta((" + prule
+			 * + "))"; org.jpl7.Query q2 = new org.jpl7.Query(aprule);
+			 * System.out.println((q2.hasSolution() ? aprule : "")); q2.close();
+			 * 
+			 * }
+			 */
 
-			}*/
-			
 			org.jpl7.Query qp = new org.jpl7.Query("['dbpr.pl']");
-			System.out.println((qp.hasSolution() ? "Goal success" : ""));	
+			System.out.println((qp.hasSolution() ? "Goal success" : ""));
 			qp.close();
- 
 			
-			org.jpl7.Query qq = new org.jpl7.Query("debdb(p,[p('http://dbpedia.org/resource/Italy')],[],Query,Constraints)");
+			
+			
+
+			org.jpl7.Query qq = new org.jpl7.Query(
+					"debdb(p,[p('http://dbpedia.org/resource/Switzerland')],[],Query,Constraints)");
 			System.out.println((qq.hasSolution() ? "Goal success" : ""));
-			Map<String, org.jpl7.Term> sol = qq.oneSolution();
+			Map<String, org.jpl7.Term> sol = qq.getSolution();
+			Map<String, org.jpl7.Term> sol2 = qq.nextSolution();
+			Map<String, org.jpl7.Term> sol3 = qq.nextSolution();
+			Map<String, org.jpl7.Term> sol4 = qq.nextSolution();
+			Map<String, org.jpl7.Term> sol5 = qq.nextSolution();
 			qq.close();
-			
-			
-            rowsP.clear();
-            
-            HashMap<String, org.jpl7.Term> el = new HashMap<String, org.jpl7.Term>();
-			 
-            for (String a : sol.keySet()) {
-				
-				
-				el.put(a, sol.get(a));	
-				
-				
+
+			rowsP.clear();
+
+			HashMap<String, org.jpl7.Term> el = new HashMap<String, org.jpl7.Term>();
+
+			for (String a : sol.keySet()) {
+
+				el.put(a, sol.get(a));
+
 			}
-				
-            rowsP.add(el);
-            answersP.setItems(rowsP);
-				
-				HashMap<String, Term> sr = rowsP.get(0);
+			
+			HashMap<String, org.jpl7.Term> el2 = new HashMap<String, org.jpl7.Term>();
 
-				for (Map.Entry<String, Term> entry : sr.entrySet()) {
-				
+			for (String a : sol2.keySet()) {
+
+				el2.put(a, sol2.get(a));
+
+			}
+			
+			HashMap<String, org.jpl7.Term> el3 = new HashMap<String, org.jpl7.Term>();
+
+			for (String a : sol3.keySet()) {
+
+				el3.put(a, sol3.get(a));
+
+			}
+			
+			HashMap<String, org.jpl7.Term> el4 = new HashMap<String, org.jpl7.Term>();
+
+			for (String a : sol4.keySet()) {
+
+				el4.put(a, sol4.get(a));
+
+			}
+			
+			HashMap<String, org.jpl7.Term> el5 = new HashMap<String, org.jpl7.Term>();
+
+			for (String a : sol5.keySet()) {
+
+				el5.put(a, sol5.get(a));
+
+			}
+
+			rowsP.add(el);
+			rowsP.add(el2);
+			rowsP.add(el3);
+			rowsP.add(el4);
+			rowsP.add(el5);
+			answersP.setItems(rowsP);
+
+			HashMap<String, Term> sr = rowsP.get(0);
+
+			for (Map.Entry<String, Term> entry : sr.entrySet()) {
+
 				answersP.addColumn(h -> h.get(entry.getKey())).setHeader(entry.getKey()).setAutoWidth(true)
-				.setResizable(true).setSortable(true)
-				.setComparator((x, y) -> isNumeric(x.get(entry.getKey()).toString())
-						& isNumeric(y.get(entry.getKey()).toString())
-								? Float.compare(Float.parseFloat(x.get(entry.getKey()).toString()),
-										Float.parseFloat(y.get(entry.getKey()).toString()))
-								: x.get(entry.getKey()).toString()
-										.compareTo(y.get(entry.getKey()).toString()));
-				}
-					
-			 
-				
-				
+						.setResizable(true).setSortable(true)
+						.setComparator((x, y) -> isNumeric(x.get(entry.getKey()).toString())
+								& isNumeric(y.get(entry.getKey()).toString())
+										? Float.compare(Float.parseFloat(x.get(entry.getKey()).toString()),
+												Float.parseFloat(y.get(entry.getKey()).toString()))
+										: x.get(entry.getKey()).toString().compareTo(y.get(entry.getKey()).toString()));
+			}
 
-			/*for (List<String> r : rules) {
-
-				String dr = r.get(0);
-				String rule2 = "retractall(" + dr + ")";
-				org.jpl7.Query q4 = new org.jpl7.Query(rule2);
-				System.out.println((q4.hasSolution() ? rule2 : ""));
-				q4.close();
-
-			}*/
+			/*
+			 * for (List<String> r : rules) {
+			 * 
+			 * String dr = r.get(0); String rule2 = "retractall(" + dr + ")"; org.jpl7.Query
+			 * q4 = new org.jpl7.Query(rule2); System.out.println((q4.hasSolution() ? rule2
+			 * : "")); q4.close();
+			 * 
+			 * }
+			 */
 
 		});
 
@@ -560,8 +590,8 @@ public class MainView extends VerticalLayout {
 		layout.add(find);
 		lanswersS.add(answersS);
 		layout.add(lanswersS);
-		
-		lanswersP.add(answersP);		
+
+		lanswersP.add(answersP);
 		layout.add(lanswersP);
 		lexpected.add(new Span("List of Expected Answers"));
 		lexpected.add(expected);
