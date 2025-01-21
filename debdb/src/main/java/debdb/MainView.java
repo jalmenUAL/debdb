@@ -6,7 +6,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Set;
 
 import org.apache.jena.query.Query;
 import org.apache.jena.query.QueryExecution;
@@ -47,7 +46,7 @@ public class MainView extends VerticalLayout {
 
 	public MainView() {
 
-		System.setProperty("java.library.path", "/Applications/SWI-Prolog.app/Contents/swipl/lib");
+		 
 		VaadinSession.getCurrent().setErrorHandler(new CustomErrorHandler());
 		final VerticalLayout layout = new VerticalLayout();
 		layout.getStyle().set("width", "100%");
@@ -83,6 +82,7 @@ public class MainView extends VerticalLayout {
 		removeunexpected.setWidth("100%");
 		removeunexpected.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
 		removeunexpected.setVisible(false);
+		
 
 		VerticalLayout edS = new VerticalLayout();
 		VerticalLayout edP = new VerticalLayout();
@@ -267,6 +267,7 @@ public class MainView extends VerticalLayout {
 				lunexpected.setVisible(false);
 				removeexpected.setVisible(false);
 				removeunexpected.setVisible(false);
+				lanswersP.setVisible(false);
 
 				Query query = QueryFactory.create(prefix + editorS.getValue());
 
@@ -367,7 +368,7 @@ public class MainView extends VerticalLayout {
 		removeexpected.addClickListener(event -> {
 
 			if (expected.getSelectedItems().size() == 0) {
-				Notification.show("Please select at least one element");
+				show_notification("Warning","Please select at least one element");
 			} else {
 
 				rowsE.removeAll(expected.getSelectedItems());
@@ -380,7 +381,7 @@ public class MainView extends VerticalLayout {
 		removeunexpected.addClickListener(event -> {
 
 			if (unexpected.getSelectedItems().size() == 0) {
-				Notification.show("Please select at least one element");
+				show_notification("Warning","Please select at least one element");
 			} else {
 
 				rowsU.removeAll(unexpected.getSelectedItems());
@@ -393,7 +394,7 @@ public class MainView extends VerticalLayout {
 		addunexpected.addClickListener(event -> {
 
 			if (answersS.getSelectedItems().size() == 0) {
-				Notification.show("Please select at least one element");
+				show_notification("Warning","Please select at least one element");
 			} else {
 
 				rowsU.addAll(answersS.getSelectedItems());
@@ -471,24 +472,32 @@ public class MainView extends VerticalLayout {
 				q2.close();
 
 			}*/
-
-			org.jpl7.Query q3 = new org.jpl7.Query("{ X + Y + Z =:= 20, X >= 0, Y >= 0, Z >= 0, X =:= 2*Y }, dump([X, Y, Z], [x, y, z], DumpedConstraints),with_output_to(atom(Output),"
-					+ "write(DumpedConstraints))");
-			System.out.println((q3.hasSolution() ? "Goal success" : ""));
-			Map<String, org.jpl7.Term>[] sols = q3.allSolutions();
 			
-			q3.close();
+			org.jpl7.Query qp = new org.jpl7.Query("['dbpr.pl']");
+			System.out.println((qp.hasSolution() ? "Goal success" : ""));	
+			qp.close();
+ 
+			
+			org.jpl7.Query qq = new org.jpl7.Query("debdb(p,[p('http://dbpedia.org/resource/Italy')],[],Query,Constraints)");
+			System.out.println((qq.hasSolution() ? "Goal success" : ""));
+			Map<String, org.jpl7.Term> sol = qq.oneSolution();
+			qq.close();
 			
 			
-
-			for (Map<String, org.jpl7.Term> solution : sols) {
-
-				for (String a : solution.keySet()) {
-					HashMap<String, org.jpl7.Term> el = new HashMap<String, org.jpl7.Term>();
-					el.put(a, solution.get(a));
-					 
-					rowsP.add(el);
-				}
+            rowsP.clear();
+            
+            HashMap<String, org.jpl7.Term> el = new HashMap<String, org.jpl7.Term>();
+			 
+            for (String a : sol.keySet()) {
+				
+				
+				el.put(a, sol.get(a));	
+				
+				
+			}
+				
+            rowsP.add(el);
+            answersP.setItems(rowsP);
 				
 				HashMap<String, Term> sr = rowsP.get(0);
 
@@ -503,8 +512,10 @@ public class MainView extends VerticalLayout {
 								: x.get(entry.getKey()).toString()
 										.compareTo(y.get(entry.getKey()).toString()));
 				}
-				answersP.setItems(rowsP);
-			}
+					
+			 
+				
+				
 
 			/*for (List<String> r : rules) {
 
@@ -531,6 +542,7 @@ public class MainView extends VerticalLayout {
 				find.setVisible(true);
 				removeexpected.setVisible(true);
 				removeunexpected.setVisible(true);
+				lanswersP.setVisible(false);
 
 			}
 
@@ -548,7 +560,8 @@ public class MainView extends VerticalLayout {
 		layout.add(find);
 		lanswersS.add(answersS);
 		layout.add(lanswersS);
-		lanswersP.add(answersP);
+		
+		lanswersP.add(answersP);		
 		layout.add(lanswersP);
 		lexpected.add(new Span("List of Expected Answers"));
 		lexpected.add(expected);

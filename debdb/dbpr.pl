@@ -1,7 +1,7 @@
 :-use_module(library(http/http_open)).
 :-use_module(library(clpfd)).
 :-use_module(library(clpq)).
-%:-use_module(library(semweb/rdf11)).
+:-use_module(library(semweb/rdf11)).
 :-use_module(library(semweb/sparql_client)).
 :-dynamic num_rule/1.
 :-dynamic rule/3.
@@ -17,14 +17,14 @@
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-%p(COUNTRY):-
-%       rdf(COUNTRY,'http://www.w3.org/1999/02/22-rdf-syntax-ns#type','http://dbpedia.org/class/yago/WikicatCountriesInEurope'),
-%       rdf(COUNTRY,'http://dbpedia.org/ontology/currency','http://dbpedia.org/resource/Euro'),
-%       rdf(COUNTRY,'http://dbpedia.org/ontology/officialLanguage','http://dbpedia.org/resource/Italian_language'),
-%       rdf(COUNTRY,'http://dbpedia.org/ontology/populationTotal',POPULATION),
-%       POPULATION=A1,
-%       100000^^'http://www.w3.org/2001/XMLSchema#integer'=B2,
-%       { A1>=B2 }.
+p(COUNTRY):-
+       rdf(COUNTRY,'http://www.w3.org/1999/02/22-rdf-syntax-ns#type','http://dbpedia.org/class/yago/WikicatCountriesInEurope'),
+       rdf(COUNTRY,'http://dbpedia.org/ontology/currency','http://dbpedia.org/resource/Euro'),
+       rdf(COUNTRY,'http://dbpedia.org/ontology/officialLanguage','http://dbpedia.org/resource/Italian_language'),
+       rdf(COUNTRY,'http://dbpedia.org/ontology/populationTotal',POPULATION),
+       POPULATION=A1,
+       100000^^'http://www.w3.org/2001/XMLSchema#integer'=B2,
+       { A1>=B2 }.
 
 
  %p(COUNTRY):-
