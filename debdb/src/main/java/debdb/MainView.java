@@ -108,9 +108,9 @@ public class MainView extends VerticalLayout {
 				+ "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>"
 				+ "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>";
 
-		String exampleA = "SELECT ?Country WHERE { " + " ?Country rdf:type yago:WikicatCountriesInEurope ."
-				+ " ?Country dbo:currency dbr:Euro ." + " ?Country dbo:officialLanguage dbr:Italian_language ."
-				+ " ?Country dbo:populationTotal ?Population ." + " FILTER(?Population>=100000) " + " }";
+		String exampleA = "SELECT ?Country WHERE {\n" + " ?Country rdf:type yago:WikicatCountriesInEurope .\n"
+				+ " ?Country dbo:currency dbr:Euro .\n" + " ?Country dbo:officialLanguage dbr:Italian_language .\n"
+				+ " ?Country dbo:populationTotal ?Population .\n" + " FILTER(?Population>=100000) \n" + " }";
 
 		String exampleB = "SELECT ?Country WHERE { " + "  ?Country rdf:type yago:WikicatCountriesInEurope" + "  }";
 
@@ -446,12 +446,14 @@ public class MainView extends VerticalLayout {
 		find.addClickListener(event -> {
 
 			lanswersP.setVisible(true);
-
+			rowsP.clear();
+		    
+			
 			/*
-			 * String t = "use_module(library(semweb/rdf11))"; org.jpl7.Query q = new
-			 * org.jpl7.Query(t); System.out.println((q.hasSolution() ? "RDF loaded" : ""));
-			 * q.close();
-			 */
+			 String t = "use_module(library(semweb/rdf11))"; org.jpl7.Query q = new
+			 org.jpl7.Query(t); System.out.println((q.hasSolution() ? "RDF loaded" : ""));
+			 q.close();
+			 
 
 			String tfd = "use_module(library(clpfd))";
 			org.jpl7.Query qfd = new org.jpl7.Query(tfd);
@@ -461,21 +463,30 @@ public class MainView extends VerticalLayout {
 			String tr = "use_module(library(clpr))";
 			org.jpl7.Query qr = new org.jpl7.Query(tr);
 			System.out.println((qr.hasSolution() ? "CLPR loaded" : ""));
-			qr.close();
-
-			/*
-			 * String prule = ""; for (List<String> r : rules) { prule = r.get(0) + ":-";
-			 * for (int i = 1; i < r.size(); i++) { prule = prule + r.get(i) + ','; } prule
-			 * = prule.substring(0, prule.length() - 1); String aprule = "asserta((" + prule
-			 * + "))"; org.jpl7.Query q2 = new org.jpl7.Query(aprule);
-			 * System.out.println((q2.hasSolution() ? aprule : "")); q2.close();
-			 * 
-			 * }
-			 */
-
+			qr.close();*/
+			
 			org.jpl7.Query qp = new org.jpl7.Query("['dbpr.pl']");
 			System.out.println((qp.hasSolution() ? "Goal success" : ""));
 			qp.close();
+
+			
+			String prule = "";
+			for (List<String> r : rules) {
+				prule = r.get(0) + ":-";
+				for (int i = 1; i < r.size(); i++) {
+					prule = prule + r.get(i) + ',';
+				}
+				prule = prule.substring(0, prule.length() - 1);
+				System.out.println(prule);
+				String aprule = "asserta((" + prule + "))";
+				org.jpl7.Query qar = new org.jpl7.Query(aprule);
+				System.out.println((qar.hasSolution() ? aprule : ""));
+				qar.close();
+
+			}
+			 
+
+			
 			
 			
 			String exp = "[";
@@ -502,7 +513,7 @@ public class MainView extends VerticalLayout {
 				
 			}
 			exp = (exp + "]").replaceFirst(",","");
-			System.out.println(exp);
+			 
 			
 			String unexp = "[";
 			
@@ -528,11 +539,11 @@ public class MainView extends VerticalLayout {
 				
 			}
 			unexp = (unexp + "]").replaceFirst(",","");
-			System.out.println(unexp);
+			 
 			
 
 			org.jpl7.Query qq = new org.jpl7.Query(
-					"debdb(p,[p('http://dbpedia.org/resource/Switzerland')],[],Query,Constraints)");
+				"debdb(p,"+exp+","+unexp+",Query,Constraints)");
 			System.out.println((qq.hasSolution() ? "Goal success" : ""));
 			Map<String, org.jpl7.Term> sol = qq.getSolution();
 			Map<String, org.jpl7.Term> sol2 = qq.nextSolution();
@@ -541,7 +552,7 @@ public class MainView extends VerticalLayout {
 			Map<String, org.jpl7.Term> sol5 = qq.nextSolution();
 			qq.close();
 
-			rowsP.clear();
+			
 
 			HashMap<String, org.jpl7.Term> el = new HashMap<String, org.jpl7.Term>();
 
@@ -584,12 +595,13 @@ public class MainView extends VerticalLayout {
 			}
 			
 			 
-
+			rowsP.clear();
 			rowsP.add(el);
 			rowsP.add(el2);
 			rowsP.add(el3);
 			rowsP.add(el4);
 			rowsP.add(el5);
+			answersP.removeAllColumns();
 			answersP.setItems(rowsP);
 
 			HashMap<String, Term> sr = rowsP.get(0);
@@ -605,15 +617,17 @@ public class MainView extends VerticalLayout {
 										: x.get(entry.getKey()).toString().compareTo(y.get(entry.getKey()).toString()));
 			}
 
-			/*
-			 * for (List<String> r : rules) {
-			 * 
-			 * String dr = r.get(0); String rule2 = "retractall(" + dr + ")"; org.jpl7.Query
-			 * q4 = new org.jpl7.Query(rule2); System.out.println((q4.hasSolution() ? rule2
-			 * : "")); q4.close();
-			 * 
-			 * }
-			 */
+			
+			for (List<String> r : rules) {
+
+				String dr = r.get(0);
+				String rule = "retractall(" + dr + ")";
+				org.jpl7.Query qrr = new org.jpl7.Query(rule);
+				System.out.println((qrr.hasSolution() ? rule : ""));
+				qrr.close();
+
+			}
+			 
 
 		});
 

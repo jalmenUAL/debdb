@@ -5,6 +5,10 @@
 :-use_module(library(semweb/sparql_client)).
 :-dynamic num_rule/1.
 :-dynamic rule/3.
+:-dynamic p/1.
+:-dynamic p/2.
+:-dynamic p/3.
+:-dynamic p/4.
 :-set_prolog_flag(character_escapes,false).
 
 :-rdf_register_prefix(dbr,'http://dbpedia.org/resource/',[force(true)]).
@@ -17,14 +21,14 @@
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-p(COUNTRY):-
-       rdf(COUNTRY,'http://www.w3.org/1999/02/22-rdf-syntax-ns#type','http://dbpedia.org/class/yago/WikicatCountriesInEurope'),
-       rdf(COUNTRY,'http://dbpedia.org/ontology/currency','http://dbpedia.org/resource/Euro'),
-       rdf(COUNTRY,'http://dbpedia.org/ontology/officialLanguage','http://dbpedia.org/resource/Italian_language'),
-       rdf(COUNTRY,'http://dbpedia.org/ontology/populationTotal',POPULATION),
-       POPULATION=A1,
-       100000^^'http://www.w3.org/2001/XMLSchema#integer'=B2,
-       { A1>=B2 }.
+%p(COUNTRY):-
+%       rdf(COUNTRY,'http://www.w3.org/1999/02/22-rdf-syntax-ns#type','http://dbpedia.org/class/yago/WikicatCountriesInEurope'),
+%       rdf(COUNTRY,'http://dbpedia.org/ontology/currency','http://dbpedia.org/resource/Euro'),
+%       rdf(COUNTRY,'http://dbpedia.org/ontology/officialLanguage','http://dbpedia.org/resource/Italian_language'),
+%       rdf(COUNTRY,'http://dbpedia.org/ontology/populationTotal',POPULATION),
+%       POPULATION=A1,
+%       100000^^'http://www.w3.org/2001/XMLSchema#integer'=B2,
+%       { A1>=B2 }.
 
 
  %p(COUNTRY):-
@@ -357,6 +361,7 @@ launched_rdf_string(Op,"",[],[Op]).
 rdfterm_string(A,SA):-var(A),!,term_string(A,SV),concat("?",SV,SA).
 rdfterm_string(A,A):-integer(A),!.
 rdfterm_string(A,A):-float(A),!.
+rdfterm_string(V^^_,V):-!.
 rdfterm_string(literal(type(_,V)),VV):-!,atom_number(V,VV).
 rdfterm_string(A,SA):-concat(" <",A,A1),concat(A1,"> ",SA).	
 
