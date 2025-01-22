@@ -299,6 +299,9 @@ public class MainView extends VerticalLayout {
 					List<String> variables = results.getResultVars();
 
 					rowsS.clear();
+					rowsE.clear();
+					rowsU.clear();
+					
 					while (results.hasNext()) {
 						QuerySolution solution = results.next();
 						LinkedHashMap<String, String> sol = new LinkedHashMap<String, String>();
@@ -426,10 +429,12 @@ public class MainView extends VerticalLayout {
 			add.addClickListener(event2 -> {
 				HashMap<String, String> ex = new HashMap<String, String>();
 
+				 
 				for (Entry<String, TextField> tf : textfields.entrySet()) {
 					ex.put(tf.getKey(), tf.getValue().getValue());
-					rowsE.add(ex);
+					
 				}
+				rowsE.add(ex);
 				expected.setItems(rowsE);
 				d.close();
 			});
@@ -473,6 +478,57 @@ public class MainView extends VerticalLayout {
 			qp.close();
 			
 			
+			String exp = "[";
+			
+			for (HashMap<String, String> r: rowsE) {
+				
+			
+				String sexpected = "p(";
+				
+				 
+				for (Entry<String, String> key: r.entrySet())
+			     {
+					if (key.getValue().contains("^^"))
+					{   
+						 
+						String[] parts = key.getValue().split("\\^\\^");
+						
+						sexpected = sexpected + ","+ parts[0]+"^^'"+parts[1]+"'";
+					}
+					else  sexpected = sexpected + ",'" + key.getValue()+"'";
+			     }
+				sexpected = (sexpected + ")").replaceFirst(",","");
+				exp = exp + "," + sexpected;
+				
+			}
+			exp = (exp + "]").replaceFirst(",","");
+			System.out.println(exp);
+			
+			String unexp = "[";
+			
+			for (HashMap<String, String> r: rowsU) {
+				
+			
+				String sunexpected = "p(";
+				
+				 
+				for (Entry<String, String> key: r.entrySet())
+			     {
+					if (key.getValue().contains("^^"))
+					{   
+						 
+						String[] parts = key.getValue().split("\\^\\^");
+						
+						sunexpected = sunexpected + ","+ parts[0]+"^^'"+parts[1]+"'";
+					}
+					else  sunexpected = sunexpected + ",'" + key.getValue()+"'";
+			     }
+				sunexpected = (sunexpected + ")").replaceFirst(",","");
+				unexp = unexp + "," + sunexpected;
+				
+			}
+			unexp = (unexp + "]").replaceFirst(",","");
+			System.out.println(unexp);
 			
 
 			org.jpl7.Query qq = new org.jpl7.Query(
@@ -526,6 +582,8 @@ public class MainView extends VerticalLayout {
 				el5.put(a, sol5.get(a));
 
 			}
+			
+			 
 
 			rowsP.add(el);
 			rowsP.add(el2);
