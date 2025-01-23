@@ -465,7 +465,7 @@ public class MainView extends VerticalLayout {
 			System.out.println((qr.hasSolution() ? "CLPR loaded" : ""));
 			qr.close();*/
 			
-			org.jpl7.Query qp = new org.jpl7.Query("['dbpr.pl']");
+			org.jpl7.Query qp = new org.jpl7.Query("['dbprex.pl']");
 			System.out.println((qp.hasSolution() ? "Goal success" : ""));
 			qp.close();
 
@@ -543,7 +543,7 @@ public class MainView extends VerticalLayout {
 			
 
 			org.jpl7.Query qq = new org.jpl7.Query(
-				"debdb(p,"+exp+","+unexp+",Query,Constraints)");
+				"debdb(p,"+exp+","+unexp+",Query,Constraints,Replacements)");
 			System.out.println((qq.hasSolution() ? "Goal success" : ""));
 			Map<String, org.jpl7.Term> sol = qq.getSolution();
 			Map<String, org.jpl7.Term> sol2 = qq.nextSolution();
@@ -603,7 +603,13 @@ public class MainView extends VerticalLayout {
 			rowsP.add(el5);
 			answersP.removeAllColumns();
 			answersP.setItems(rowsP);
-
+			
+			 
+			answersP.getElement().setProperty("white-space", "normal");
+			answersP.getElement().setProperty("word-wrap", "break-word");
+			answersP.getElement().setProperty("overflow-wrap", "anywhere");
+			answersP.getElement().setProperty("font-size", "7pt");
+			
 			HashMap<String, Term> sr = rowsP.get(0);
 
 			for (Map.Entry<String, Term> entry : sr.entrySet()) {
