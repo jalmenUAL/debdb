@@ -13,6 +13,7 @@ import org.apache.jena.query.QueryExecutionFactory;
 import org.apache.jena.query.QueryFactory;
 import org.apache.jena.query.QuerySolution;
 import org.apache.jena.query.ResultSet;
+import org.apache.jena.sparql.core.Var;
 import org.jpl7.Term;
 
 import com.vaadin.flow.component.ClickEvent;
@@ -360,9 +361,15 @@ public class MainView extends VerticalLayout {
 
 						}
 					} else {
-
-						 
-						show_notification("Successful!", "No answer found");
+						for ( Var entry: query.getProjectVars()) {
+						
+						TextField tf = new TextField();
+						tf.setWidth("100%");
+						tf.setValue("");
+						textfields.put(entry.getName(), tf);
+						
+						}
+						show_notification("Successful!", "No answer found. Arreglar!!!!!!!");
 					}
 
 				}
