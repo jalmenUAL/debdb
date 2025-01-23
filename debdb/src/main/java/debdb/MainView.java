@@ -54,6 +54,9 @@ public class MainView extends VerticalLayout {
 		lab.setWidth("100%");
 		lab.setHeight("200px");
 
+		
+		Span time = new Span();
+		
 		Button run = new Button("Run");
 		run.setWidth("100%");
 		run.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
@@ -63,11 +66,11 @@ public class MainView extends VerticalLayout {
 		debug.setVisible(false);
 		Button addexpected = new Button("Add Expected Answer");
 		addexpected.setWidth("100%");
-		addexpected.addThemeVariants(ButtonVariant.LUMO_ERROR);
+		addexpected.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
 		addexpected.setVisible(false);
 		Button addunexpected = new Button("Add Unexpected Answer");
 		addunexpected.setWidth("100%");
-		addunexpected.addThemeVariants(ButtonVariant.LUMO_ERROR);
+		addunexpected.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
 		addunexpected.setVisible(false);
 		Button find = new Button("Find Query");
 		find.setWidth("100%");
@@ -367,11 +370,14 @@ public class MainView extends VerticalLayout {
 		});
 
 		removeexpected.addClickListener(event -> {
+			
+			
 
 			if (expected.getSelectedItems().size() == 0) {
 				show_notification("Warning:", "Please select at least one element");
 			} else {
 
+				lanswersP.setVisible(false);
 				rowsE.removeAll(expected.getSelectedItems());
 				expected.setItems(rowsE);
 
@@ -380,11 +386,14 @@ public class MainView extends VerticalLayout {
 		});
 
 		removeunexpected.addClickListener(event -> {
+			
+			
 
 			if (unexpected.getSelectedItems().size() == 0) {
 				show_notification("Warning:", "Please select at least one element");
 			} else {
 
+				lanswersP.setVisible(false);
 				rowsU.removeAll(unexpected.getSelectedItems());
 				unexpected.setItems(rowsU);
 
@@ -393,11 +402,14 @@ public class MainView extends VerticalLayout {
 		});
 
 		addunexpected.addClickListener(event -> {
+			
+			
 
 			if (answersS.getSelectedItems().size() == 0) {
 				show_notification("Warning:", "Please select at least one element");
 			} else {
 
+				lanswersP.setVisible(false);
 				rowsU.addAll(answersS.getSelectedItems());
 				unexpected.setItems(rowsU);
 
@@ -406,6 +418,8 @@ public class MainView extends VerticalLayout {
 		});
 
 		addexpected.addClickListener(event -> {
+			
+			lanswersP.setVisible(false);
 
 			Dialog d = new Dialog();
 			d.setWidth("100%");
@@ -540,20 +554,26 @@ public class MainView extends VerticalLayout {
 			}
 			unexp = (unexp + "]").replaceFirst(",","");
 			 
-			
+			 
+			        long startTime = System.nanoTime();
 
 			org.jpl7.Query qq = new org.jpl7.Query(
 				"debdb(p,"+exp+","+unexp+",Query,Constraints,Replacements)");
-			System.out.println((qq.hasSolution() ? "Goal success" : ""));
-			Map<String, org.jpl7.Term> sol = qq.getSolution();
-			Map<String, org.jpl7.Term> sol2 = qq.nextSolution();
-			Map<String, org.jpl7.Term> sol3 = qq.nextSolution();
-			Map<String, org.jpl7.Term> sol4 = qq.nextSolution();
-			Map<String, org.jpl7.Term> sol5 = qq.nextSolution();
-			qq.close();
 
+			long endTime = System.nanoTime();
 			
-
+			long duration = (endTime - startTime)/1000;  
+			
+			time.setText("Debugging result in "+String.valueOf(duration)+ "ms");
+			
+			System.out.println((qq.hasSolution() ? "Goal success" : ""));
+			
+			rowsP.clear();
+			
+			if (qq.hasSolution()) {
+			
+			Map<String, org.jpl7.Term> sol = qq.getSolution();
+			
 			HashMap<String, org.jpl7.Term> el = new HashMap<String, org.jpl7.Term>();
 
 			for (String a : sol.keySet()) {
@@ -561,6 +581,13 @@ public class MainView extends VerticalLayout {
 				el.put(a, sol.get(a));
 
 			}
+			
+			rowsP.add(el);
+			
+			if (qq.hasNext())
+			{
+			
+			Map<String, org.jpl7.Term> sol2 = qq.nextSolution();
 			
 			HashMap<String, org.jpl7.Term> el2 = new HashMap<String, org.jpl7.Term>();
 
@@ -570,6 +597,14 @@ public class MainView extends VerticalLayout {
 
 			}
 			
+			rowsP.add(el2);
+			
+			if (qq.hasNext())
+				
+			{
+			
+			Map<String, org.jpl7.Term> sol3 = qq.nextSolution();
+			
 			HashMap<String, org.jpl7.Term> el3 = new HashMap<String, org.jpl7.Term>();
 
 			for (String a : sol3.keySet()) {
@@ -577,6 +612,14 @@ public class MainView extends VerticalLayout {
 				el3.put(a, sol3.get(a));
 
 			}
+			
+			rowsP.add(el3);
+			
+			if (qq.hasNext())
+				
+			{
+			
+			Map<String, org.jpl7.Term> sol4 = qq.nextSolution();
 			
 			HashMap<String, org.jpl7.Term> el4 = new HashMap<String, org.jpl7.Term>();
 
@@ -586,6 +629,14 @@ public class MainView extends VerticalLayout {
 
 			}
 			
+			if (qq.hasNext())
+				
+			{
+			
+			rowsP.add(el4);
+			
+			Map<String, org.jpl7.Term> sol5 = qq.nextSolution();
+			
 			HashMap<String, org.jpl7.Term> el5 = new HashMap<String, org.jpl7.Term>();
 
 			for (String a : sol5.keySet()) {
@@ -594,13 +645,16 @@ public class MainView extends VerticalLayout {
 
 			}
 			
-			 
-			rowsP.clear();
-			rowsP.add(el);
-			rowsP.add(el2);
-			rowsP.add(el3);
-			rowsP.add(el4);
 			rowsP.add(el5);
+			
+			}
+			}
+			}
+			}
+			
+			
+			
+			qq.close();
 			answersP.removeAllColumns();
 			answersP.setItems(rowsP);
 			
@@ -623,6 +677,7 @@ public class MainView extends VerticalLayout {
 										: x.get(entry.getKey()).toString().compareTo(y.get(entry.getKey()).toString()));
 			}
 
+			} else {show_notification("Debugging unsuccessfull:","There is not query for your request"); lanswersP.setVisible(false);}
 			
 			for (List<String> r : rules) {
 
@@ -666,9 +721,10 @@ public class MainView extends VerticalLayout {
 		layout.add(addexpected);
 		layout.add(addunexpected);
 		layout.add(find);
+		lanswersS.add(new Span("Answers"));
 		lanswersS.add(answersS);
 		layout.add(lanswersS);
-
+		lanswersP.add(time); 
 		lanswersP.add(answersP);
 		layout.add(lanswersP);
 		lexpected.add(new Span("List of Expected Answers"));
