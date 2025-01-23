@@ -361,6 +361,7 @@ public class MainView extends VerticalLayout {
 						}
 					} else {
 
+						 
 						show_notification("Successful!", "No answer found");
 					}
 
