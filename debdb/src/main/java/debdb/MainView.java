@@ -361,15 +361,26 @@ public class MainView extends VerticalLayout {
 
 						}
 					} else {
+						
+						
 						for ( Var entry: query.getProjectVars()) {
 						
+							expected.addColumn(h -> h.get(entry.getName())).setHeader(entry.getName()).setAutoWidth(true)
+							.setResizable(true).setSortable(true)
+							.setComparator((x, y) -> isNumeric(x.get(entry.getName()).toString())
+									& isNumeric(y.get(entry.getName()).toString())
+											? Float.compare(Float.parseFloat(x.get(entry.getName()).toString()),
+													Float.parseFloat(y.get(entry.getName()).toString()))
+											: x.get(entry.getName()).toString()
+													.compareTo(y.get(entry.getName()).toString()));
+							
 						TextField tf = new TextField();
 						tf.setWidth("100%");
 						tf.setValue("");
 						textfields.put(entry.getName(), tf);
 						
 						}
-						show_notification("Successful!", "No answer found. Arreglar!!!!!!!");
+						show_notification("Successful!", "No answer found.");
 					}
 
 				}
@@ -453,9 +464,12 @@ public class MainView extends VerticalLayout {
 
 				 
 				for (Entry<String, TextField> tf : textfields.entrySet()) {
+					
+					 
 					ex.put(tf.getKey(), tf.getValue().getValue());
 					
 				}
+				
 				rowsE.add(ex);
 				expected.setItems(rowsE);
 				d.close();
@@ -470,23 +484,6 @@ public class MainView extends VerticalLayout {
 			lanswersP.setVisible(true);
 			rowsP.clear();
 		    
-			
-			/*
-			 String t = "use_module(library(semweb/rdf11))"; org.jpl7.Query q = new
-			 org.jpl7.Query(t); System.out.println((q.hasSolution() ? "RDF loaded" : ""));
-			 q.close();
-			 
-
-			String tfd = "use_module(library(clpfd))";
-			org.jpl7.Query qfd = new org.jpl7.Query(tfd);
-			System.out.println((qfd.hasSolution() ? "CLPFD loaded" : ""));
-			qfd.close();
-
-			String tr = "use_module(library(clpr))";
-			org.jpl7.Query qr = new org.jpl7.Query(tr);
-			System.out.println((qr.hasSolution() ? "CLPR loaded" : ""));
-			qr.close();*/
-			
 			org.jpl7.Query qp = new org.jpl7.Query("['dbprex.pl']");
 			System.out.println((qp.hasSolution() ? "Goal success" : ""));
 			qp.close();
@@ -508,8 +505,6 @@ public class MainView extends VerticalLayout {
 			}
 			 
 
-			
-			
 			
 			String exp = "[";
 			

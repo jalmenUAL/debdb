@@ -5,6 +5,16 @@
 :-use_module(library(semweb/sparql_client)).
 :-dynamic num_rule/1.
 :-dynamic rule/3.
+:-dynamic p/1.
+:-dynamic p/2.
+:-dynamic p/3.
+:-dynamic p/4.
+:-dynamic p/5.
+:-dynamic p/6.
+:-dynamic p/7.
+:-dynamic p/8.
+:-dynamic p/9.
+:-dynamic p/10.
 :-set_prolog_flag(character_escapes,false).
 
 :-rdf_register_prefix(dbr,'http://dbpedia.org/resource/',[force(true)]).
@@ -168,7 +178,7 @@ debdb(p,P,Q,TP,SV,RV):- deb(p,P,Q,B,V),
 					show_replacements(V,RV).
 					
 show_replacements([],[]):-!.
-show_replacements([replaced(X,Y)|RR],RS):-X==Y,!,fail.
+show_replacements([replaced(X,Y)|_],_):-X==Y,!,fail.
 show_replacements([replaced(X,Y)|RR],[replaced(X,SY)|RS]):-var(Y),!,term_string(Y,SV),
 				concat("?",SV,SY),show_replacements(RR,RS).
 show_replacements([replaced(X,Y)|RR],[replaced(X,Y)|RS]):-show_replacements(RR,RS).
