@@ -25,17 +25,23 @@
 %cd('/Users/jalmen/Google Drive/Mi unidad/Investigacion/dbpedia-pl').
 %debdb(p,[p('http://dbpedia.org/resource/Italy')],[],Query,Constraints).
 
+ 
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %p(COUNTRY,POPULATION):-rdf(COUNTRY,'http://www.w3.org/1999/02/22-rdf-syntax-ns#type','http://dbpedia.org/class/yago/%WikicatCountriesInEurope'),rdf(COUNTRY,'http://dbpedia.org/ontology/currency','http://dbpedia.org/resource/Euro'),rdf(COUNTRY,'http://dbpedia.org/ontology/%officialLanguage','http://dbpedia.org/resource/Italian_language'),rdf(COUNTRY,'http://dbpedia.org/ontology/%populationTotal',POPULATION),POPULATION=A1,100000^^'http://www.w3.org/2001/XMLSchema#integer'=B2,{ A1>=B2 }.
 
+%p(BOOK):-rdf(BOOK,'http://www.w3.org/1999/02/22-rdf-syntax-ns#type','http://dbpedia.org/ontology/Book'),
+%	rdf(BOOK,'http://dbpedia.org/ontology/author','http://dbpedia.org/resource/J._K._Rowling'),
+%	rdf(BOOK,'http://dbpedia.org/ontology/numberOfPages',PAGES),
+%	PAGES=A1,300^^'http://www.w3.org/2001/XMLSchema#integer'=B2,{ A1>B2 }.
 
- p(COUNTRY):-
-       rdf(COUNTRY,'http://www.w3.org/1999/02/22-rdf-syntax-ns#type','http://dbpedia.org/class/yago/WikicatCountriesInEurope'),
-       rdf(COUNTRY,'http://dbpedia.org/ontology/currency','http://dbpedia.org/resource/Euro'),
-       rdf(COUNTRY,'http://dbpedia.org/ontology/officialLanguage','http://dbpedia.org/resource/Italian_language'),
-       rdf(COUNTRY,'http://dbpedia.org/ontology/populationTotal',POPULATION),
-       POPULATION>100000.
+% p(COUNTRY):-
+%       rdf(COUNTRY,'http://www.w3.org/1999/02/22-rdf-syntax-ns#type','http://dbpedia.org/class/yago/WikicatCountriesInEurope'),
+ %      rdf(COUNTRY,'http://dbpedia.org/ontology/currency','http://dbpedia.org/resource/Euro'),
+ %    rdf(COUNTRY,'http://dbpedia.org/ontology/officialLanguage','http://dbpedia.org/resource/Italian_language'),
+ %     rdf(COUNTRY,'http://dbpedia.org/ontology/populationTotal',POPULATION),
+ %      POPULATION>100000.
        
 %p(COUNTRY):-
 %       rdf(COUNTRY,'http://www.w3.org/1999/02/22-rdf-syntax-ns#type','http://dbpedia.org/class/yago/WikicatCountriesInEurope'),
@@ -160,6 +166,7 @@ rdf_weak(rdf(A,B,C),rdf(A,D,C),[replaced(B,D)]):-!,ground(A),ground(B). %propert
 rdf_weak(F,FW,L):-rdf_weak_exp(F,FW,L).
 
 rdf_weak_exp(A,A,[]):-var(A),!.
+rdf_weak_exp(A,A,[]):-atomic(A).
 rdf_weak_exp(C,WA,L):-C=..['^^'|[A,_]],!,rdf_weak_exp(A,WA,L).
 rdf_weak_exp(B,A,[replaced(B,A)]):-atomic(B),ground(B),!.
 rdf_weak_exp(F,FW,V):-F=..[Op,A,B],rdf_weak_exp(A,WA,VA),
@@ -189,17 +196,18 @@ deb(Pred,_,_,_,_):-clause_gen(Pred),fail.
 
 deb(_,P,Q,C,Free):-rule(N,_,_),deb_step(N,P,Q,C,Free).
 
-deb_step(N,P,Q,C,Free):- pos(N,P,Free), 
+deb_step(N,P,Q,C,Free):- pos(N,P,Free),  
 			 neg(N,Q,Free),  
 			 rule(N,R,C),
+			 
 			 match(Free,R).
 
 
-pos(N,P,Free):-  conjunction_sparql(P,N,Free,Pattern1,Const1,S),
+pos(N,P,Free):-  conjunction_sparql(P,N,Free,Pattern1,Const1,S), 
 		 (P=[]->true;
 		 (ground(Pattern1)-> 
 			(
-		
+			
 			concat("ASK WHERE {",S,St1FA),concat(St1FA," }",St1FFA), 
 			 
 			sparql_query(St1FFA,Row1FA,[ host('dbpedia.org'), path('/sparql/')]),
@@ -213,10 +221,12 @@ pos(N,P,Free):-  conjunction_sparql(P,N,Free,Pattern1,Const1,S),
 			 	Row1F=..[row|LRow1F],
 			 	term_variables(Pattern1,VarsC1),
 			 	VarsC1=LRow1F,
+				  
 			 	solvep(Const1,_)
 			))).
 
-neg(N,Q,Free):-  union_sparql(Q,N,Free,Pattern2,Const2,S2),
+neg(N,Q,Free):-  union_sparql(Q,N,Free,Pattern2,_,S2),
+			  conjunction_sparql(Q,N,Free,Pattern3,Const3,S3),
 		 (Q=[]->true;
 		 (ground(Pattern2)->
                         ( 
@@ -227,13 +237,18 @@ neg(N,Q,Free):-  union_sparql(Q,N,Free,Pattern2,Const2,S2),
 			);
 			(
 				concat("SELECT * WHERE {",S2,St2F),concat(St2F," }",St2FF),		 
-			 		 
+			 		  
 					sparql_query(St2FF,Row2F,[ host('dbpedia.org'), path('/sparql/')])->
 			 		(
 					  Row2F=..[row|LRow2F],
 			 		  term_variables(Pattern2,VarsC2),
 			 		  VarsC2=LRow2F,
-			                  solven(Const2,_)
+					 concat("SELECT * WHERE {",S3,St3F),concat(St3F," }",St3FF),
+					 sparql_query(St3FF,Row3F,[ host('dbpedia.org'), path('/sparql/')]),
+					 Row3F=..[row|LRow3F],
+			 		  term_variables(Pattern3,VarsC3),
+			 		  VarsC3=LRow3F,
+					  (Const3\=[]->solven(Const3,_);false)
 					)
 					;true
 				 
@@ -321,7 +336,8 @@ conjunction_sparql([F|RF],N,Free,Pattern3,Const3,StS):-
 			conjunction_sparql(RF,N,Free,Pattern2,Const2,StRF),
 			(RF=[] -> concat(StFPP,StRF,StS),Pattern3=Pattern,Const3=Const;
 			(concat(StFPP,StRF,StS),
-			 append(Pattern,Pattern2,Pattern3),append(Const,Const2,Const3))).
+			 append(Pattern,Pattern2,Pattern3),
+			 append(Const,Const2,Const3))).
 
 
 union_sparql([],_,_,[],[],"").
@@ -377,8 +393,10 @@ rdfterm_string(A,SA):-concat(" <",A,A1),concat(A1,"> ",SA).
 solvep([],[]).
 solvep([C|RC],[NC|RNC]):- transp(C,NC),  call(NC), solvep(RC,RNC).
 
-solven([C|_],[NC]):- transn(C,NC),call(NC).
-solven([_|RC],RNC):- solven(RC,RNC).
+solven([],[]).
+solven([C|RC],[NC|RNC]):- transn(C,NC),  call(NC), solven(RC,RNC).
+
+ 
 
 transp(C,NCC):-C=..[Op,A,B],trans_lit(A,LA,TA),trans_lit(B,LB,TB),TA\=real,TB\=real,!,concat('#',Op,OpS),NCC=..[OpS,LA,LB].
 transp(C,NCC):-C=..[Op,A,B],trans_lit(A,LA,real),trans_lit(B,LB,_),!,NC=..[Op,LA,LB],NCC=clpq:{NC}.
@@ -388,6 +406,10 @@ transn(C,NCC):-C=..[Op,A,B],inv(Op,IOp),trans_lit(A,LA,real),trans_lit(B,LB,_),!
 transn(C,NCC):-C=..[Op,A,B],inv(Op,IOp),trans_lit(A,LA,_),trans_lit(B,LB,real),NC=..[IOp,LA,LB],NCC=clpq:{NC}.
 
 trans_lit(A,A,var):-var(A),!.
+
+trans_lit('$null$',_,var):-!.
+
+trans_lit(A,A,var):-atomic(A),!.
 trans_lit(literal(type(_, V)),V,integer):-integer(V),!.
 trans_lit(literal(type(_, V)),V,real):-float(V),!.
 trans_lit(literal(type(T, V)),VV,integer):-is_integer(T),!,atom_number(V,VV).

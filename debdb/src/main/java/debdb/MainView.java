@@ -110,7 +110,11 @@ public class MainView extends VerticalLayout {
 				+ "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>"
 				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>"
 				+ "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>"
-				+ "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>";
+				+ "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>"
+				+ "PREFIX dc:      <http://purl.org/dc/elements/1.1/>\n"
+				+ "PREFIX dct:     <http://purl.org/dc/terms/>\n"
+				+ "PREFIX geo:     <http://www.w3.org/2003/01/geo/wgs84_pos#>\n"
+				+ "PREFIX foaf:    <http://xmlns.com/foaf/0.1/>";
 
 		String exampleA = "SELECT ?Country WHERE {\n" + " ?Country rdf:type yago:WikicatCountriesInEurope .\n"
 				+ " ?Country dbo:currency dbr:Euro .\n" + " ?Country dbo:officialLanguage dbr:Italian_language .\n"
@@ -325,6 +329,8 @@ public class MainView extends VerticalLayout {
 						lanswersS.setVisible(true);
 
 						HashMap<String, String> sr = rowsS.get(0);
+						
+						textfields.clear();
 
 						for (Map.Entry<String, String> entry : sr.entrySet()) {
 
@@ -362,7 +368,7 @@ public class MainView extends VerticalLayout {
 						}
 					} else {
 						
-						
+						textfields.clear();
 						for ( Var entry: query.getProjectVars()) {
 						
 							expected.addColumn(h -> h.get(entry.getName())).setHeader(entry.getName()).setAutoWidth(true)
@@ -374,6 +380,7 @@ public class MainView extends VerticalLayout {
 											: x.get(entry.getName()).toString()
 													.compareTo(y.get(entry.getName()).toString()));
 							
+						
 						TextField tf = new TextField();
 						tf.setWidth("100%");
 						tf.setValue("");
@@ -562,6 +569,8 @@ public class MainView extends VerticalLayout {
 
 			org.jpl7.Query qq = new org.jpl7.Query(
 				"debdb(p,"+exp+","+unexp+",Query,Constraints,Replacements)");
+			
+			System.out.println("debdb(p,"+exp+","+unexp+",Query,Constraints,Replacements)");
 
 			long endTime = System.nanoTime();
 			
