@@ -17,7 +17,7 @@ import org.springframework.boot.web.servlet.support.SpringBootServletInitializer
 @SpringBootApplication
 @PWA(name = "Project Base for Vaadin with Spring", shortName = "Project Base")
 @Theme("my-theme")
-public class Application extends SpringBootServletInitializer implements AppShellConfigurator   {
+public class Application implements AppShellConfigurator   {
 
     public static void main(String[] args) {
         SpringApplication.run(Application.class, args);
