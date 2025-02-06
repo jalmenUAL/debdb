@@ -51,7 +51,7 @@ public class MainView extends VerticalLayout {
 		final VerticalLayout layout = new VerticalLayout();
 		layout.getStyle().set("width", "100%");
 		layout.getStyle().set("background", "#F8F8F8");
-		Image lab = new Image("img/bannerspl.png", "banner");
+		Image lab = new Image("img/banner.png", "banner");
 		lab.setWidth("100%");
 		lab.setHeight("200px");
 
@@ -147,12 +147,12 @@ public class MainView extends VerticalLayout {
 
 		String exampleE = "SELECT ?company WHERE {\n"
 				+ "  ?company a dbo:Company .\n"
-				+ "?company dbo:industry	dbr:Information_technology .\n"
+				+ "  ?company dbo:industry dbr:Information_technology .\n"
 				+ "  ?company dbo:foundingYear ?year .\n"
-				+ "?company dbo:product	dbr:Software .\n"
-				+ "?company dbo:numberOfEmployees ?employee .\n"
+				+ "  ?company dbo:product	dbr:Software .\n"
+				+ "  ?company dbo:numberOfEmployees ?employee .\n"
 				+ "  FILTER(?year > 2000) \n"
-				+ "FILTER(?employee < 1000)\n"
+				+ "  FILTER(?employee < 1000)\n"
 				+ "}";
 
 		String exampleF = "SELECT ?river WHERE {\n"
@@ -160,26 +160,25 @@ public class MainView extends VerticalLayout {
 				+ "  ?river dbo:length ?length .\n"
 				+ "  ?river geo:lat ?lat\n"
 				+ "  FILTER(?length > 100000) .\n"
-				+ "FILTER(?lat <= 90)\n"
+				+ "  FILTER(?lat <= 90)\n"
 				+ "}";
 		
 		String exampleG = "SELECT ?mountain WHERE {\n"
 				+ "  ?mountain a dbo:Mountain .\n"
 				+ "  ?mountain dbo:elevation ?elevation .\n"
-				+ "?mountain dbo:locatedInArea	dbr:Peru\n"
+				+ "  ?mountain dbo:locatedInArea	dbr:Peru\n"
 				+ "  FILTER(?elevation > 5000)\n"
 				+ "}";
 
 		String exampleH = "SELECT ?band WHERE {\n"
 				+ "  ?band a dbo:Band .\n"
-				+ "  ?band  dbo:hometown	dbr:Liverpool .\n"
-				+ "?band dbo:genre dbr:Jazz_music\n"
+				+ "  ?band  dbo:hometown dbr:Liverpool .\n"
+				+ "  ?band dbo:genre dbr:Jazz_music\n"
 				+ "}";
 
 		String exampleI = "SELECT ?university WHERE {\n"
 				+ "  ?university a dbo:University .\n"
-				+ " ?university dbo:country	\n"
-				+ "dbr:Germany .\n"
+				+ "  ?university dbo:country	dbr:Germany .\n"
 				+ "  ?university dbo:numberOfStudents ?students .\n"
 				+ "  FILTER(?students < 500)\n"
 				+ "}";
@@ -187,10 +186,10 @@ public class MainView extends VerticalLayout {
 		String exampleJ = "SELECT ?museum WHERE {\n"
 				+ "  ?museum a dbo:Museum .\n"
 				+ "  ?museum dbo:location dbr:Paris .\n"
-				+ "?museum dbo:numberOfVisitors ?visitors .\n"
-				+ "   ?museum geo:lat ?lat\n"
-				+ "FILTER(?lat > 50)\n"
-				+ "FILTER(?visitors < 5000)\n"
+				+ "  ?museum dbo:numberOfVisitors ?visitors .\n"
+				+ "  ?museum geo:lat ?lat\n"
+				+ "  FILTER(?lat > 50)\n"
+				+ "  FILTER(?visitors < 5000)\n"
 				+ "}";
 		
 		String exampleK = "SELECT ?company WHERE {\n"
@@ -206,9 +205,9 @@ public class MainView extends VerticalLayout {
 		
 		String exampleL = "SELECT ?planet WHERE {\n"
 				+ "  ?planet a dbo:Planet .\n"
-				+ "?planet dbo:mass ?mass .     \n"
-				+ "?planet dbo:meanRadius ?radius .   \n"
-				+ "   FILTER (?mass > 1E24)          \n"
+				+ "  ?planet dbo:mass ?mass .     \n"
+				+ "  ?planet dbo:meanRadius ?radius .   \n"
+				+ "  FILTER (?mass > 1E24)          \n"
 				+ "  FILTER (?radius < 100000000)   \n"
 				+ " \n"
 				+ "}";
@@ -323,17 +322,17 @@ public class MainView extends VerticalLayout {
 			}
 		else if (e.getSource().getText().equals("Example J")) {
 
-			editorS.setValue(exampleI);
+			editorS.setValue(exampleJ);
 
 		}
 			
 		else if (e.getSource().getText().equals("Example K")) {
 
-			editorS.setValue(exampleI);
+			editorS.setValue(exampleK);
 
 		} else if (e.getSource().getText().equals("Example L")) {
 
-			editorS.setValue(exampleI);
+			editorS.setValue(exampleL);
 
 		}
 
@@ -589,7 +588,7 @@ public class MainView extends VerticalLayout {
 			lanswersP.setVisible(true);
 			rowsP.clear();
 		    
-			org.jpl7.Query qp = new org.jpl7.Query("['dbprex.pl']");
+			org.jpl7.Query qp = new org.jpl7.Query("['prolog/dbprex.pl']");
 			System.out.println((qp.hasSolution() ? "Goal success" : ""));
 			qp.close();
 

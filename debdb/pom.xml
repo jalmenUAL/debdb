@@ -6,9 +6,9 @@
     <!-- Vaadin project from https://github.com/vaadin/skeleton-starter-flow-spring -->
     <groupId>com.example</groupId>
     <artifactId>spring-skeleton</artifactId>
-    <name>Project base for Spring Boot and Vaadin Flow</name>
+    <name>debdb</name>
     <version>1.0-SNAPSHOT</version>
-    <packaging>jar</packaging>
+    <packaging>war</packaging>
 
     <properties>
         <java.version>17</java.version>
@@ -155,8 +155,8 @@
       <artifactId>jpl</artifactId>
       <version>7.4.0</version>
       <packaging>jar</packaging>
-      <!-- <file>C:/Program Files/swipl/lib/jpl.jar</file>-->
-      <file> /Applications/SWI-Prolog.app/Contents/swipl/lib/jpl.jar</file>
+      <file>C:/Program Files/swipl/lib/jpl.jar</file>
+      <!--<file> /Applications/SWI-Prolog.app/Contents/swipl/lib/jpl.jar</file>-->
       <generatePom>false</generatePom>
    </configuration>
    
