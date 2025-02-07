@@ -40,7 +40,7 @@ import de.f0rce.ace.AceEditor;
 import de.f0rce.ace.enums.AceMode;
 import de.f0rce.ace.enums.AceTheme;
 
-@Route
+@Route("debdb")
 public class MainView extends VerticalLayout {
 
 	List<List<String>> rules;
@@ -588,7 +588,7 @@ public class MainView extends VerticalLayout {
 			lanswersP.setVisible(true);
 			rowsP.clear();
 		    
-			org.jpl7.Query qp = new org.jpl7.Query("['prolog/dbprex.pl']");
+			org.jpl7.Query qp = new org.jpl7.Query("['dbprex.pl']");
 			System.out.println((qp.hasSolution() ? "Goal success" : ""));
 			qp.close();
 
