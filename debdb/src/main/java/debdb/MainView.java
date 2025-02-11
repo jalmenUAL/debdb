@@ -14,6 +14,7 @@ import org.apache.jena.query.QueryFactory;
 import org.apache.jena.query.QuerySolution;
 import org.apache.jena.query.ResultSet;
 import org.apache.jena.sparql.core.Var;
+import org.jpl7.Atom;
 import org.jpl7.Term;
 
 import com.vaadin.flow.component.ClickEvent;
@@ -588,7 +589,10 @@ public class MainView extends VerticalLayout {
 			lanswersP.setVisible(true);
 			rowsP.clear();
 		    
-			org.jpl7.Query qp = new org.jpl7.Query("['dbprex.pl']");
+			//String plFile = getClass().getClassLoader().getResource("dbprex.pl").getPath().replaceFirst("/", "");   
+			//System.out.println(new Term[]{new Atom(plFile)});
+			//org.jpl7.Query qp = new org.jpl7.Query("consult", new Term[]{new Atom(plFile)});
+			org.jpl7.Query qp = new org.jpl7.Query("['C:/Program Files/Vaadin-swipl/dbprex.pl']");
 			System.out.println((qp.hasSolution() ? "Goal success" : ""));
 			qp.close();
 			
