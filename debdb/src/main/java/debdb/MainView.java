@@ -120,14 +120,14 @@ public class MainView extends VerticalLayout {
 		String exampleA="SELECT ?vehicle WHERE {\n"
 				+ "  ?vehicle a dbo:Automobile .\n"
 				+ "  ?vehicle dbo:length ?length .\n"
-				+ "  ?vehicle dbo:manufacturer	dbr:SET\n"
+				+ "  ?vehicle dbo:manufacturer	dbr:SEAT\n"
 				+ "  FILTER(?length > 4)\n"
 				+ "}";
 
 		String exampleB = "SELECT ?movie WHERE {\n"
 				+ "  ?movie a dbo:Film .\n"
 				+ "  ?movie dbo:runtime ?runtime .\n"
-				+ "  ?movie dbo:director dbr:ChristopherNolan .\n"
+				+ "  ?movie dbo:director dbr:Christopher_Nolan .\n"
 				+ "  FILTER (?runtime > 120) \n"
 				+ "}";
 
@@ -591,6 +591,8 @@ public class MainView extends VerticalLayout {
 			org.jpl7.Query qp = new org.jpl7.Query("['dbprex.pl']");
 			System.out.println((qp.hasSolution() ? "Goal success" : ""));
 			qp.close();
+			
+			
 
 			
 			String prule = "";
