@@ -210,7 +210,7 @@ public class MainView extends VerticalLayout {
 
 		VerticalLayout lanswersP = new VerticalLayout();
 		lanswersP.setWidth("100%");
-		lanswersP.setHeight("400pt");
+		lanswersP.setHeight("150pt");
 		lanswersP.setVisible(false);
 
 		Grid<HashMap<String, String>> answersS = new Grid<HashMap<String, String>>();
@@ -687,6 +687,7 @@ public class MainView extends VerticalLayout {
 			
 			rowsP.add(el);
 			
+			/*
 			if (qq.hasNext())
 			{
 			
@@ -753,7 +754,7 @@ public class MainView extends VerticalLayout {
 			}
 			}
 			}
-			}
+		*/
 			
 			
 			
