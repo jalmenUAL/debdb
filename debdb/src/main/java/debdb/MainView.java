@@ -118,100 +118,74 @@ public class MainView extends VerticalLayout {
 				+ "PREFIX foaf:    <http://xmlns.com/foaf/0.1/>";
 		
 		
-		String exampleA="SELECT ?vehicle WHERE {\n"
-				+ "  ?vehicle a dbo:Automobile .\n"
-				+ "  ?vehicle dbo:length ?length .\n"
-				+ "  ?vehicle dbo:manufacturer	dbr:SEAT\n"
-				+ "  FILTER(?length > 4)\n"
-				+ "}";
+		String exampleA="SELECT ?Country WHERE {\n"
+				+ " ?Country rdf:type yago:WikicatCountriesInEurope .\n"
+				+ " ?Country dbo:currency dbr:Euro .\n"
+				+ " ?Country dbo:officialLanguage dbr:Italian_language .\n"
+				+ " ?Country dbo:populationTotal ?Pop .\n"
+				+ " FILTER (?Pop >=10000000)\n "
+				+ "}\n"
+				+ "\n"
+				+ "#Expected http://dbpedia.org/resource/Italy\n"
+				+ "#Expected http://dbpedia.org/resource/Switzerland";
 
-		String exampleB = "SELECT ?movie WHERE {\n"
-				+ "  ?movie a dbo:Film .\n"
+		String exampleB = "SELECT ?movie  \n"
+				+ "{\n"
+				+ "  ?movie rdf:type dbo:Film .\n"
+				+ "  ?movie dbo:releaseDate ?releaseYear .\n"
 				+ "  ?movie dbo:runtime ?runtime .\n"
-				+ "  ?movie dbo:director dbr:Christopher_Nolan .\n"
-				+ "  FILTER (?runtime > 120) \n"
-				+ "}";
+				+ "  ?movie dbo:budget ?budget .\n"
+				+ "  ?movie dbo:gross ?boxOffice .\n"
+				+ "  ?movie dbo:imdbRating ?rating .\n"
+				+ "  FILTER (xsd:float(?releaseYear) > 2000)         \n"
+				+ "  FILTER (xsd:float(?runtime) > 90)               \n"
+				+ "  FILTER (xsd:float(?budget) > 50000000)          \n"
+				+ "  FILTER (xsd:float(?boxOffice) > 200000000)      \n"
+				+ "  FILTER (xsd:float(?rating) > 7)                 \n"
+				+ "}"
+				+ "\n"
+				+ "#Expected http://dbpedia.org/resource/Interstellar_(film)\n";
+				
 
-		String exampleC = "SELECT ?book WHERE {\n"
-				+ "  ?book a dbo:Book .\n"
-				+ "  ?book dbo:author dbr:J._K._Rowling .\n"
-				+ "  ?book dbo:numberOfPages ?pages .\n"
-				+ "  FILTER (?pages > 300)\n"
-				+ "}";
+		String exampleC = "SELECT ?movie  \n"
+				+ "WHERE {\n"
+				+ "  ?movie rdf:type dbo:Film .\n"
+				+ "  ?movie dbo:director dbr:Martin_Scorsese .\n"
+				+ "  ?movie dbo:starring dbr:Leonardo_DiCaprio .\n"
+				+ "  ?movie dbo:runtime ?runtime .\n"
+				+ "  FILTER(xsd:float(?runtime) > 90)\n"
+				+ "}  "
+				+ "\n"
+				+ "#Expected http://dbpedia.org/resource/Taxi_Driver\n";
+				
 
-		String exampleD = "SELECT ?country WHERE {\n"
-				+ "  ?country a dbo:Country .\n"
-				+ "  ?country dbo:officialLanguage dbr:Spanish_language .\n"
-				+ "  ?country dbo:populationTotal ?population .\n"
-				+ "  FILTER (?population > 1000000) \n"
-				+ "}";
-
-		String exampleE = "SELECT ?company WHERE {\n"
-				+ "  ?company a dbo:Company .\n"
-				+ "  ?company dbo:industry dbr:Information_technology .\n"
-				+ "  ?company dbo:foundingYear ?year .\n"
-				+ "  ?company dbo:product	dbr:Software .\n"
-				+ "  ?company dbo:numberOfEmployees ?employee .\n"
-				+ "  FILTER(?year > 2000) \n"
-				+ "  FILTER(?employee < 1000)\n"
-				+ "}";
-
-		String exampleF = "SELECT ?river WHERE {\n"
-				+ "  ?river a dbo:River .\n"
-				+ "  ?river dbo:length ?length .\n"
-				+ "  ?river geo:lat ?lat\n"
-				+ "  FILTER(?length > 100000) .\n"
-				+ "  FILTER(?lat <= 90)\n"
-				+ "}";
-		
-		String exampleG = "SELECT ?mountain WHERE {\n"
-				+ "  ?mountain a dbo:Mountain .\n"
-				+ "  ?mountain dbo:elevation ?elevation .\n"
-				+ "  ?mountain dbo:locatedInArea	dbr:Peru\n"
-				+ "  FILTER(?elevation > 5000)\n"
-				+ "}";
-
-		String exampleH = "SELECT ?band WHERE {\n"
-				+ "  ?band a dbo:Band .\n"
-				+ "  ?band  dbo:hometown dbr:Liverpool .\n"
-				+ "  ?band dbo:genre dbr:Jazz_music\n"
-				+ "}";
-
-		String exampleI = "SELECT ?university WHERE {\n"
+		String exampleD = "SELECT ?university WHERE {\n"
 				+ "  ?university a dbo:University .\n"
 				+ "  ?university dbo:country	dbr:Germany .\n"
 				+ "  ?university dbo:numberOfStudents ?students .\n"
 				+ "  FILTER(?students < 500)\n"
-				+ "}";
+				+ "} "
+				+ "\n"
+				+ "#Unexpected http://dbpedia.org/resource/CODE_University_of_Applied_Sciences\n"
+				+ "#Unexpected http://dbpedia.org/resource/Karlsruhe_University_of_Arts_and_Design";
 
-		String exampleJ = "SELECT ?museum WHERE {\n"
-				+ "  ?museum a dbo:Museum .\n"
-				+ "  ?museum dbo:location dbr:Paris .\n"
-				+ "  ?museum dbo:numberOfVisitors ?visitors .\n"
-				+ "  ?museum geo:lat ?lat\n"
-				+ "  FILTER(?lat > 50)\n"
-				+ "  FILTER(?visitors < 5000)\n"
-				+ "}";
-		
-		String exampleK = "SELECT ?company WHERE {\n"
-				+ "  ?company a dbo:Company .   \n"
-				+ "  ?company dbo:locationCountry dbr:United_States .\n"
-				+ "  ?company dbo:numberOfEmployees ?employees .   \n"
-				+ "  ?company dbo:revenue ?revenue .   \n"
-				+ "  ?company dbo:foundingYear ?foundingYear .  \n"
-				+ "  FILTER (?employees > 10000)\n"
-				+ "  FILTER(?revenue > 100000000)\n"
-				+ "  FILTER(?foundingYear < 2000)  \n"
-				+ "}";
-		
-		String exampleL = "SELECT ?planet WHERE {\n"
-				+ "  ?planet a dbo:Planet .\n"
-				+ "  ?planet dbo:mass ?mass .     \n"
-				+ "  ?planet dbo:meanRadius ?radius .   \n"
-				+ "  FILTER (?mass > 1E24)          \n"
-				+ "  FILTER (?radius < 100000000)   \n"
-				+ " \n"
-				+ "}";
+		String exampleE = "SELECT ?planet \n"
+				+ "WHERE {\n"
+				+ "  ?planet rdf:type dbo:Planet .\n"
+				+ "  ?planet dbo:volume ?volume .\n"
+				+ "  ?planet dbo:maximumTemperature ?tempMax .\n"
+				+ "  ?planet dbo:minimumTemperature ?tempMin .\n"
+				+ "  ?planet dbo:meanOrbitalSpeed ?orbitalSpeed .\n"
+				+ "  FILTER (xsd:float(?volume) > 0)         \n"
+				+ "  FILTER (xsd:float(?tempMax) > -273)    \n"
+				+ "  FILTER (xsd:float(?tempMin) > -273)    \n"
+				+ "  FILTER (xsd:float(?orbitalSpeed) > 0)   \n"
+				+ "} "
+				+ "\n"
+				+ "#Expected http://dbpedia.org/resource/Jupiter\n"
+				+ "#Expected http://dbpedia.org/resource/Earth";
+
+		 
 		
 		
 
@@ -287,55 +261,75 @@ public class MainView extends VerticalLayout {
 			if (e.getSource().getText().equals("Example A")) {
 
 				editorS.setValue(exampleA);
+				lanswersS.setVisible(false);
+				debug.setVisible(false);
+				addexpected.setVisible(false);
+				addunexpected.setVisible(false);
+				lexpected.setVisible(false);
+				lunexpected.setVisible(false);
+				find.setVisible(false);
+				removeexpected.setVisible(false);
+				removeunexpected.setVisible(false);
+				lanswersP.setVisible(false);
+		      
 
 			} else if (e.getSource().getText().equals("Example B")) {
 
 				editorS.setValue(exampleB);
+				lanswersS.setVisible(false);
+				debug.setVisible(false);
+				addexpected.setVisible(false);
+				addunexpected.setVisible(false);
+				lexpected.setVisible(false);
+				lunexpected.setVisible(false);
+				find.setVisible(false);
+				removeexpected.setVisible(false);
+				removeunexpected.setVisible(false);
+				lanswersP.setVisible(false);
 
 			} else if (e.getSource().getText().equals("Example C")) {
 
 				editorS.setValue(exampleC);
+				lanswersS.setVisible(false);
+				debug.setVisible(false);
+				addexpected.setVisible(false);
+				addunexpected.setVisible(false);
+				lexpected.setVisible(false);
+				lunexpected.setVisible(false);
+				find.setVisible(false);
+				removeexpected.setVisible(false);
+				removeunexpected.setVisible(false);
+				lanswersP.setVisible(false);
 
 			} else if (e.getSource().getText().equals("Example D")) {
 
 				editorS.setValue(exampleD);
+				lanswersS.setVisible(false);
+				debug.setVisible(false);
+				addexpected.setVisible(false);
+				addunexpected.setVisible(false);
+				lexpected.setVisible(false);
+				lunexpected.setVisible(false);
+				find.setVisible(false);
+				removeexpected.setVisible(false);
+				removeunexpected.setVisible(false);
+				lanswersP.setVisible(false);
 
 			} else if (e.getSource().getText().equals("Example E")) {
 
 				editorS.setValue(exampleE);
+				lanswersS.setVisible(false);
+				debug.setVisible(false);
+				addexpected.setVisible(false);
+				addunexpected.setVisible(false);
+				lexpected.setVisible(false);
+				lunexpected.setVisible(false);
+				find.setVisible(false);
+				removeexpected.setVisible(false);
+				removeunexpected.setVisible(false);
+				lanswersP.setVisible(false);
 
-			} else if (e.getSource().getText().equals("Example F")) {
-
-				editorS.setValue(exampleF);
-
-			} else if (e.getSource().getText().equals("Example G")) {
-
-				editorS.setValue(exampleG);
-
-			} else if (e.getSource().getText().equals("Example H")) {
-
-				editorS.setValue(exampleH);
-
-			} else if (e.getSource().getText().equals("Example I")) {
-
-				editorS.setValue(exampleI);
-
-			}
-		else if (e.getSource().getText().equals("Example J")) {
-
-			editorS.setValue(exampleJ);
-
-		}
-			
-		else if (e.getSource().getText().equals("Example K")) {
-
-			editorS.setValue(exampleK);
-
-		} else if (e.getSource().getText().equals("Example L")) {
-
-			editorS.setValue(exampleL);
-
-		}
+			}  
 
 		}
 
@@ -348,13 +342,7 @@ public class MainView extends VerticalLayout {
 		basicSubMenu.addItem("Example C", listener);
 		basicSubMenu.addItem("Example D", listener);
 		basicSubMenu.addItem("Example E", listener);
-		basicSubMenu.addItem("Example F", listener);
-		basicSubMenu.addItem("Example G", listener);
-		basicSubMenu.addItem("Example H", listener);
-		basicSubMenu.addItem("Example I", listener);
-		basicSubMenu.addItem("Example J", listener);
-		basicSubMenu.addItem("Example K", listener);
-		basicSubMenu.addItem("Example L", listener);
+		 
 
 		run.addClickListener(new ComponentEventListener<ClickEvent<Button>>() {
 
