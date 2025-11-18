@@ -119,7 +119,7 @@ public class MainView extends VerticalLayout {
 		
 		
 		String exampleA="SELECT ?Country WHERE {\n"
-				+ " ?Country rdf:type yago:WikicatCountriesInEurope .\n"
+				+ " ?Country rdf:type dbo:Place .\n"
 				+ " ?Country dbo:currency dbr:Euro .\n"
 				+ " ?Country dbo:officialLanguage dbr:Italian_language .\n"
 				+ " ?Country dbo:populationTotal ?Pop .\n"
