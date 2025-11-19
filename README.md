@@ -29,7 +29,7 @@ Before running the web tool, ensure you have the following installed:
    - Clone the repository:
 
 ```bash
-git clone https://github.com/jalmenUAL/debdb-ual.git
+git clone https://github.com/jalmenUAL/debdb.git
 ```
 
 2. **Open Project**
